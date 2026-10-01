@@ -1,6 +1,6 @@
 # Move the health endpoint into a controller
 
-- **Status:** draft
+- **Status:** in-progress
 - **Started:** 2026-10-01, from the Agents tab · **PR:** #<pr>
 - **Mode:** interactive
 
@@ -10,8 +10,8 @@ The `ship` agent ticks each item only after it is finished and pushed. A new
 session resumes from the first unticked item.
 
 - [x] Spec and plan written
-- [ ] Approved (by @<user>, <date>, tweaks: <none>)
-- [ ] Acceptance tests written
+- [x] Approved (by @dustinkorzaan, 2026-10-01, tweaks: none; approved in Agents chat)
+- [x] Acceptance tests written (existing `HealthEndpointTests.GetHealthReturnsOkStatus` covers AC1)
 - [ ] Implementation (all Plan tasks ticked)
 - [ ] Verify gate green
 - [ ] Peer review clean
@@ -62,8 +62,8 @@ blob/SAS, no data access).
 - Keep the current `/health` path: the existing health endpoint and its test
   already establish it as the health-check URL, and controller routing can
   preserve it.
-- No question round needed; the route and response are already established, so
-  this plan is ready for approval.
+- Approved as-is by @dustinkorzaan on 2026-10-01 in the Agents chat; no answers
+  or tweaks.
 
 ## Plan
 
@@ -99,15 +99,9 @@ The `Story PR` workflow copies the text between the markers into the PR
 description on every push. Keep the markers; edit only between them.
 
 <!-- pr-description:start -->
-## Plan ready for approval
+✅ Implementation in progress
 
-- Move the health endpoint from `Program.cs` into a controller.
-- Preserve `GET /health` and the existing `{"status":"ok"}` response.
-- Update the endpoint test to cover the controller-backed route.
-- Verify the API changes and run the full repository checks.
-- No other behavior or infrastructure changes are in scope.
-
-Reply here or in the Agents chat:
-`approved` (take the recommendation and build) ·
-`approved, but <tweak>`
+- Approval received for the plan as written; `/health` and `{"status":"ok"}` remain unchanged.
+- AC1 is already covered by `HealthEndpointTests.GetHealthReturnsOkStatus`.
+- Proceeding with the controller refactor, verification and code review.
 <!-- pr-description:end -->
