@@ -13,16 +13,19 @@ function renderApp() {
 }
 
 describe('hello shell', () => {
+  const timestampUtc = '2026-10-01T12:00:00.000Z';
+  const localTimestamp = new Date(timestampUtc).toLocaleString();
+
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  it('renders the API greeting when the request succeeds', async () => {
+  it('renders the API greeting followed by its timestamp in local time', async () => {
     // AC2
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ message: 'Hello, world!' }), {
+        new Response(JSON.stringify({ message: 'Hello World', timestampUtc }), {
           headers: { 'Content-Type': 'application/json' },
         }),
       ),
@@ -30,7 +33,11 @@ describe('hello shell', () => {
 
     renderApp();
 
-    expect(await screen.findByText('Hello, world!')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', {
+        name: `Hello World ${localTimestamp}`,
+      }),
+    ).toBeInTheDocument();
   });
 
   it('renders a loading state while the API request is pending', async () => {
@@ -53,12 +60,16 @@ describe('hello shell', () => {
       expect(finishRequest).toBeTypeOf('function'),
     );
     finishRequest(
-      new Response(JSON.stringify({ message: 'Hello, world!' }), {
+      new Response(JSON.stringify({ message: 'Hello World', timestampUtc }), {
         headers: { 'Content-Type': 'application/json' },
       }),
     );
     await waitFor(() =>
-      expect(screen.getByText('Hello, world!')).toBeInTheDocument(),
+      expect(
+        screen.getByRole('heading', {
+          name: `Hello World ${localTimestamp}`,
+        }),
+      ).toBeInTheDocument(),
     );
   });
 

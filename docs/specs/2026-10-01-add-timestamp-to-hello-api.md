@@ -8,7 +8,7 @@
 
 - [x] Spec and plan written
 - [x] Approved (for rev 1, by @dustinkorzaan, 2026-10-01, Agents chat; accepted assumptions: `timestampUtc` is UTC/ISO 8601 and displayed in browser-local time; tweaks: none)
-- [ ] Acceptance tests written (rev 1)
+- [x] Acceptance tests written (rev 1)
 - [ ] Implementation (rev 1 Plan tasks)
 - [ ] Verify gate green (rev 1)
 - [ ] Peer review clean (rev 1)
@@ -76,6 +76,7 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 
 | Round | Gate | Findings | Resolution (commit / reason) |
 |---|---|---|---|
+| rev 1 | Acceptance tests | Added assertions for the API DTO's message and UTC timestamp, UI local-time rendering, and end-to-end output. | Pushed acceptance tests before implementation. |
 
 ## Open issues
 
