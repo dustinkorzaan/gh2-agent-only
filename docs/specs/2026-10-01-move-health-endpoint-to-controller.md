@@ -1,6 +1,6 @@
 # Move the health endpoint into a controller
 
-- **Status:** in-progress
+- **Status:** shipped
 - **Started:** 2026-10-01, from the Agents tab · **PR:** #<pr>
 - **Mode:** interactive
 
@@ -15,8 +15,8 @@ session resumes from the first unticked item.
 - [x] Implementation (all Plan tasks ticked)
 - [x] Verify gate green
 - [x] Peer review clean
-- [ ] Final review: SHIP
-- [ ] PR description updated, ready for human review
+- [x] Final review: SHIP
+- [x] PR description updated, ready for human review
 
 `@copilot revise: ...` unticks everything from Approved down; see
 `## Revisions`.
@@ -90,6 +90,7 @@ blob/SAS, no data access).
 |---|---|---|---|
 | 1 | Verify | `scripts/verify.sh` and `scripts/verify.sh --all` passed, including API, UI, E2E and shell checks. | n/a — green first round |
 | 1 | Peer review | No findings; controller preserves the tested path and response, and scope/checklist are clean. | n/a — clean first round |
+| 1 | Final review | SHIP — AC1 is proven by `HealthEndpointTests.GetHealthReturnsOkStatus`; all checks pass and scope is clean. Parallel validation found no review comments and 0 CodeQL alerts. | n/a — SHIP |
 
 ## Open issues
 
@@ -101,10 +102,40 @@ The `Story PR` workflow copies the text between the markers into the PR
 description on every push. Keep the markers; edit only between them.
 
 <!-- pr-description:start -->
-✅ Implementation and verification complete
+✅ Ready for human review
 
-- Health now serves through an MVC controller while preserving `GET /health` and `{"status":"ok"}`.
-- AC1 is covered by `HealthEndpointTests.GetHealthReturnsOkStatus`.
-- `scripts/verify.sh` and `scripts/verify.sh --all` passed.
-- Peer review found no issues; final review is pending.
+## Summary
+
+Moved the health endpoint from a minimal API mapping into an MVC controller.
+The endpoint remains `GET /health` and returns HTTP 200 with
+`{"status":"ok"}`.
+
+## Spec
+
+`docs/specs/2026-10-01-move-health-endpoint-to-controller.md`
+
+## Acceptance criteria → evidence
+
+| # | Criterion | Evidence (test / check) |
+|---|---|---|
+| AC1 | `GET /health` returns HTTP 200 with `{"status":"ok"}` | `api/gh-api.tests/HealthEndpointTests.cs::GetHealthReturnsOkStatus` |
+
+## Verify
+
+`scripts/verify.sh --all`: PASS — ui:install, ui:lint, ui:build, ui:test,
+api:restore, api:build, api:test, e2e:playwright, shell:syntax.
+
+## Areas touched
+
+api, docs
+
+## Config / infra changes
+
+none
+
+## Review notes and follow-ups
+
+The existing `/health` path was preserved. Deep health checks and ACA probe
+wiring remain out of scope. Peer and final reviews found no issues; CodeQL
+reported 0 alerts.
 <!-- pr-description:end -->
