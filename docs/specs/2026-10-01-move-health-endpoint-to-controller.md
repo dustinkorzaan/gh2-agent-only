@@ -14,7 +14,7 @@ session resumes from the first unticked item.
 - [x] Acceptance tests written (existing `HealthEndpointTests.GetHealthReturnsOkStatus` covers AC1)
 - [x] Implementation (all Plan tasks ticked)
 - [x] Verify gate green
-- [ ] Peer review clean
+- [x] Peer review clean
 - [ ] Final review: SHIP
 - [ ] PR description updated, ready for human review
 
@@ -89,6 +89,7 @@ blob/SAS, no data access).
 | Round | Gate | Findings | Resolution (commit / reason) |
 |---|---|---|---|
 | 1 | Verify | `scripts/verify.sh` and `scripts/verify.sh --all` passed, including API, UI, E2E and shell checks. | n/a — green first round |
+| 1 | Peer review | No findings; controller preserves the tested path and response, and scope/checklist are clean. | n/a — clean first round |
 
 ## Open issues
 
@@ -105,5 +106,5 @@ description on every push. Keep the markers; edit only between them.
 - Health now serves through an MVC controller while preserving `GET /health` and `{"status":"ok"}`.
 - AC1 is covered by `HealthEndpointTests.GetHealthReturnsOkStatus`.
 - `scripts/verify.sh` and `scripts/verify.sh --all` passed.
-- Peer and final review are pending.
+- Peer review found no issues; final review is pending.
 <!-- pr-description:end -->
