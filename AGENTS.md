@@ -20,7 +20,7 @@ in this repo.
 Stories are delivered by the **`ship`** custom agent
 (`.github/agents/ship.agent.md`) in one Copilot session per step. The human
 commands are listed in `README.md`. Each story has a spec in
-`docs/specs/<issue>-<slug>.md`; its `## Progress` checklist is the source of
+`docs/specs/YYYY-MM-DD-<slug>.md`; its `## Progress` checklist is the source of
 truth for where the work is.
 
 ## Git / PR policy

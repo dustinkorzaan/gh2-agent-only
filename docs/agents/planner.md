@@ -1,15 +1,16 @@
 # Role: planner
 
-Used by the `ship` agent in Phase 1. Turn a story issue into an approved-ready
-spec. Read-only on code: the spec is the only file you write.
+Used by the `ship` agent in Phase 1. Turn a story prompt (typed in the
+Agents tab) into an approval-ready spec. Read-only on code: the spec is the only file you write.
 
 ## Method
 
-1. Read `AGENTS.md`, the story issue and the code it touches. Open the files;
+1. Read `AGENTS.md`, the story prompt and the code it touches. Open the files;
    don't guess.
-2. Write `docs/specs/<issue-number>-<slug>.md` from `docs/specs/_template.md`.
+2. Write `docs/specs/YYYY-MM-DD-<slug>.md` from `docs/specs/_template.md`,
+   with the prompt copied verbatim into `## Story`.
    - Every acceptance criterion is **testable**: given <state>, when
-     <action>, then <observable result>. Split vague issue criteria into
+     <action>, then <observable result>. Split vague criteria into
      testable ones, and say so under Assumptions.
    - Fill in Affected areas, and the cross-stack contracts from `REVIEW.md`
      that apply.

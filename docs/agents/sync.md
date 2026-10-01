@@ -1,6 +1,6 @@
 # Role: sync
 
-Used by the `ship` agent for `@copilot sync` after other PRs were
+Used by the `ship` agent for `sync` after other PRs were
 squash-merged into `main`. Make the branch correct against the new `main`, not
 just compiling.
 
@@ -42,4 +42,4 @@ just compiling.
 ## Several story PRs open
 
 Sync them one at a time: the human squash-merges one PR, then comments
-`@copilot sync` on the next.
+`sync` on the next.
