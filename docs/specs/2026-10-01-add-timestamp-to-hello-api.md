@@ -1,13 +1,13 @@
 # Add Timestamp to Hello API Response
 
-- **Status:** draft
+- **Status:** in-progress
 - **Started:** 2026-10-01, from the Agents tab · **PR:** pending
 - **Mode:** interactive
 
 ## Progress
 
 - [x] Spec and plan written
-- [ ] Approved (for rev 1, by @<user>, <date>, tweaks: <none>)
+- [x] Approved (for rev 1, by @dustinkorzaan, 2026-10-01, Agents chat; accepted assumptions: `timestampUtc` is UTC/ISO 8601 and displayed in browser-local time; tweaks: none)
 - [ ] Acceptance tests written (rev 1)
 - [ ] Implementation (rev 1 Plan tasks)
 - [ ] Verify gate green (rev 1)
@@ -50,12 +50,12 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 
 ## Assumptions
 
-- `timestampUtc` is generated for each response as a UTC timestamp and serialized in ISO 8601 form; the UI uses the browser's local timezone and locale formatting for display.
+- `timestampUtc` is generated for each response as a UTC timestamp and serialized in ISO 8601 form; the UI uses the browser's local timezone and locale formatting for display (accepted with approval).
 - The timestamp and UI display are verified with API, UI, and cross-stack tests. No infrastructure changes are needed.
 
 ## Plan
 
-- [ ] 1. Original proposal: add a timestamp to the endpoint and API test. Superseded by rev 1 below.
+- [x] 1. Original proposal superseded by approved rev 1.
 - [ ] **rev 1**
   - [ ] 1. Update the API DTO and endpoint in `api/gh-api/Program.cs` to return `message: "Hello World"` and `timestampUtc`; update `api/gh-api.tests/HelloEndpointTests.cs` to verify both fields and UTC serialization. Verify with `scripts/verify.sh api`.
   - [ ] 2. Update the UI DTO and rendering in `ui/src/helloApi.ts` and `ui/src/Hello.tsx` to display the message followed by browser-local time. Extend `ui/src/Hello.test.tsx` to verify the conversion/display, and update `ui/e2e/hello.spec.ts` to assert the full response rendering. Verify with `scripts/verify.sh ui`.
@@ -70,7 +70,7 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 
 | Rev | Request (verbatim) | Starting sha | Approved |
 |---|---|---|---|
-| 1 | Revise the plan to return a DTO with a "Hello World" message and a timestampUtc.<br><br>Refactor the UI to accept the DTO and display the message followed by local time based on timestamp...... something like "{message} {timestampUtc as local browser time}" | ce009d62dec22416b81d18781cc828adb9a1dbb1 | |
+| 1 | Revise the plan to return a DTO with a "Hello World" message and a timestampUtc.<br><br>Refactor the UI to accept the DTO and display the message followed by local time based on timestamp...... something like "{message} {timestampUtc as local browser time}" | ce009d62dec22416b81d18781cc828adb9a1dbb1 | @dustinkorzaan, 2026-10-01, Agents chat |
 
 ## Review log
 
