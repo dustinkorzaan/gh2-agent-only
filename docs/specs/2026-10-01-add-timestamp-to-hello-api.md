@@ -9,10 +9,10 @@
 - [x] Spec and plan written
 - [x] Approved (for rev 1, by @dustinkorzaan, 2026-10-01, Agents chat; accepted assumptions: `timestampUtc` is UTC/ISO 8601 and displayed in browser-local time; tweaks: none)
 - [x] Acceptance tests written (rev 1)
-- [ ] Implementation (rev 1 Plan tasks)
-- [ ] Verify gate green (rev 1)
-- [ ] Peer review clean (rev 1)
-- [ ] Final review: SHIP (rev 1)
+- [x] Implementation (rev 1 Plan tasks)
+- [x] Verify gate green (rev 1)
+- [x] Peer review clean (rev 1)
+- [x] Final review: SHIP (rev 1)
 - [ ] PR description updated, ready for human review
 
 ## Story
@@ -78,7 +78,9 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 |---|---|---|---|
 | rev 1 | Acceptance tests | Added assertions for the API DTO's message and UTC timestamp, UI local-time rendering, and end-to-end output. | Pushed acceptance tests before implementation. |
 | rev 1 | Verify | `scripts/verify.sh` passed UI lint/build/unit tests, API restore/build/tests, Playwright, and shell syntax. | Clean on first round. |
+| rev 1 | Peer review | No actionable findings. CodeQL found no alerts. | Clean. |
+| rev 1 | Final review | SHIP — AC1: `HelloEndpointTests.GetHelloReturnsGreetingAndUtcTimestamp` asserts `Hello World`, UTC offset, and timestamp within request bounds; implemented in `Program.cs`. AC2: `Hello.test.tsx` checks the DTO renders with `toLocaleString()`; implemented by the UI DTO and `Hello.tsx`. AC3: `hello.spec.ts` checks the live API response and browser-local rendered heading. `scripts/verify.sh --all` passed. | Code is ready; PR handover remains pending because no PR is associated with this branch. |
 
 ## Open issues
 
-None.
+No PR is associated with this branch, so its PR description and final human-review handover remain pending.
