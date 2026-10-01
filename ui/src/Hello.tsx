@@ -13,7 +13,9 @@ export default function Hello() {
 
   return (
     <main>
-      <h1>{data?.message}</h1>
+      <h1>
+        {data?.message} {data && new Date(data.timestampUtc).toLocaleString()}
+      </h1>
     </main>
   );
 }

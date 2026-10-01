@@ -57,8 +57,8 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 
 - [x] 1. Original proposal superseded by approved rev 1.
 - [ ] **rev 1**
-  - [ ] 1. Update the API DTO and endpoint in `api/gh-api/Program.cs` to return `message: "Hello World"` and `timestampUtc`; update `api/gh-api.tests/HelloEndpointTests.cs` to verify both fields and UTC serialization. Verify with `scripts/verify.sh api`.
-  - [ ] 2. Update the UI DTO and rendering in `ui/src/helloApi.ts` and `ui/src/Hello.tsx` to display the message followed by browser-local time. Extend `ui/src/Hello.test.tsx` to verify the conversion/display, and update `ui/e2e/hello.spec.ts` to assert the full response rendering. Verify with `scripts/verify.sh ui`.
+  - [x] 1. Update the API DTO and endpoint in `api/gh-api/Program.cs` to return `message: "Hello World"` and `timestampUtc`; update `api/gh-api.tests/HelloEndpointTests.cs` to verify both fields and UTC serialization. Verified with `scripts/verify.sh`.
+  - [x] 2. Update the UI DTO and rendering in `ui/src/helloApi.ts` and `ui/src/Hello.tsx` to display the message followed by browser-local time. Extend `ui/src/Hello.test.tsx` to verify the conversion/display, and update `ui/e2e/hello.spec.ts` to assert the full response rendering. Verified with `scripts/verify.sh`.
 
 ### Acceptance test files
 
@@ -77,6 +77,7 @@ Contracts that apply (see `REVIEW.md`): API contract; auth, data, and blobs are 
 | Round | Gate | Findings | Resolution (commit / reason) |
 |---|---|---|---|
 | rev 1 | Acceptance tests | Added assertions for the API DTO's message and UTC timestamp, UI local-time rendering, and end-to-end output. | Pushed acceptance tests before implementation. |
+| rev 1 | Verify | `scripts/verify.sh` passed UI lint/build/unit tests, API restore/build/tests, Playwright, and shell syntax. | Clean on first round. |
 
 ## Open issues
 
