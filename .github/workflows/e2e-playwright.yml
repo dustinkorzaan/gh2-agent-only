@@ -12,6 +12,11 @@ on:
 permissions:
   contents: read
 
+# A new push to a PR cancels that PR's older E2E run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   e2e:
     runs-on: ubuntu-latest
