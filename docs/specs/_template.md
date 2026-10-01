@@ -1,7 +1,7 @@
 # <Title>
 
 - **Status:** draft | approved | in-progress | shipped | needs-triage
-- **Issue / PR:** #<issue> / #<pr>
+- **Started:** <date>, from the Agents tab · **PR:** #<pr>
 - **Mode:** interactive | hands-off | quick
 
 ## Progress
@@ -20,6 +20,10 @@ session resumes from the first unticked item.
 
 `@copilot revise: ...` unticks everything from Approved down; see
 `## Revisions`.
+
+## Story
+
+<The story prompt, copied verbatim. It isn't stored anywhere else.>
 
 ## Problem
 

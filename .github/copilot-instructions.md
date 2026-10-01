@@ -5,6 +5,9 @@ Read `AGENTS.md` first. It has the stack, the rules and the one check command
 
 ## Story PRs follow the ship agent
 
+Stories start in the repo's **Agents** tab: a new task with the `ship` agent,
+where the prompt is the story. There are no issues in this repo.
+
 A PR whose branch adds a spec under `docs/specs/` (not `_template.md`) is a
 **story PR**. On a story PR, every session follows
 `.github/agents/ship.agent.md`, even when this session wasn't started with the

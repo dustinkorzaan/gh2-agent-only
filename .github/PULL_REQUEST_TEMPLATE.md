@@ -7,11 +7,9 @@
 
 <!-- What changed and why, in 2-4 sentences. -->
 
-Closes #<!-- issue number -->
-
 ## Spec
 
-<!-- docs/specs/<issue>-<slug>.md, or "n/a" for trivial changes -->
+<!-- docs/specs/YYYY-MM-DD-<slug>.md, or "n/a" for trivial changes -->
 
 ## Acceptance criteria → evidence
 
