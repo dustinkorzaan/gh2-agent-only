@@ -13,7 +13,7 @@ session resumes from the first unticked item.
 - [x] Approved (by @dustinkorzaan, 2026-10-01, tweaks: none; approved in Agents chat)
 - [x] Acceptance tests written (existing `HealthEndpointTests.GetHealthReturnsOkStatus` covers AC1)
 - [x] Implementation (all Plan tasks ticked)
-- [ ] Verify gate green
+- [x] Verify gate green
 - [ ] Peer review clean
 - [ ] Final review: SHIP
 - [ ] PR description updated, ready for human review
@@ -72,7 +72,7 @@ blob/SAS, no data access).
 - [x] 2. Reuse the existing assertion in
       `api/gh-api.tests/HealthEndpointTests.cs` that the health route returns
       HTTP 200 with `{"status":"ok"}`.
-- [ ] 3. Run `scripts/verify.sh` for the API changes, then
+- [x] 3. Run `scripts/verify.sh` for the API changes, then
       `scripts/verify.sh --all`.
 
 ### Acceptance test files
@@ -88,6 +88,7 @@ blob/SAS, no data access).
 
 | Round | Gate | Findings | Resolution (commit / reason) |
 |---|---|---|---|
+| 1 | Verify | `scripts/verify.sh` and `scripts/verify.sh --all` passed, including API, UI, E2E and shell checks. | n/a — green first round |
 
 ## Open issues
 
@@ -99,9 +100,10 @@ The `Story PR` workflow copies the text between the markers into the PR
 description on every push. Keep the markers; edit only between them.
 
 <!-- pr-description:start -->
-✅ Implementation complete; verification in progress
+✅ Implementation and verification complete
 
 - Health now serves through an MVC controller while preserving `GET /health` and `{"status":"ok"}`.
 - AC1 is covered by `HealthEndpointTests.GetHealthReturnsOkStatus`.
-- Changed-area verification passed; full verification and reviews are pending.
+- `scripts/verify.sh` and `scripts/verify.sh --all` passed.
+- Peer and final review are pending.
 <!-- pr-description:end -->
