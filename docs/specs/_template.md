@@ -77,3 +77,12 @@ Contracts that apply (see `REVIEW.md`): <API contract ↔ RTK, SAS-only blobs, E
 ## Open issues
 
 <Anything still failing or deferred after 3 rounds, with the next step. Empty when shipped.>
+
+## PR description
+
+The `Story PR` workflow copies the text between the markers into the PR
+description on every push. Keep the markers; edit only between them.
+
+<!-- pr-description:start -->
+Spec and plan in progress.
+<!-- pr-description:end -->

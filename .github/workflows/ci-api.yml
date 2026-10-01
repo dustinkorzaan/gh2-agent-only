@@ -1,15 +1,11 @@
 name: CI - API
 
+# No path filters: branch protection requires `gh-build-and-test-success`,
+# and a filtered-out workflow never reports it, which blocks the PR.
 on:
   pull_request:
-    paths:
-      - "api/**"
-      - ".github/workflows/ci-api.yml"
   push:
     branches: [main]
-    paths:
-      - "api/**"
-      - ".github/workflows/ci-api.yml"
 
 permissions:
   contents: read

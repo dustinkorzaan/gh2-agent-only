@@ -13,9 +13,10 @@ something you do in the **Agents** tab or a PR comment.
 
 1. **Start:** open the repo's **Agents** tab
    (`https://github.com/<owner>/<repo>/agents`), pick the **`ship`** agent,
-   type the story (template below) and start the task. Copilot opens a draft
-   `[Story] …` PR with the spec, then stops with questions or
-   **Plan ready for approval**.
+   type the story (template below) and start the task. Copilot pushes the
+   spec, the `Story PR` workflow opens a draft `[Story] …` PR for it, and
+   Copilot stops with questions or **Plan ready for approval** in the PR
+   description.
 2. **Approve:** read the spec in the PR's *Files changed*, then reply
    `approved`, either in the story's Agents chat or as a PR comment
    (`@copilot approved`). If it asked questions, each has a recommended
@@ -90,6 +91,7 @@ next one after each merge.
 | `.github/agents/ship.agent.md` | The agent: phases, commands, hard rules |
 | `docs/agents/*.md` | Checklists for each phase: planner, test-author, implementer, peer-reviewer, final-reviewer, sync |
 | `.github/copilot-instructions.md` | Makes every `@copilot` session on a story PR follow `ship` |
+| `.github/workflows/story-pr.yml` | Opens the draft `[Story]` PR and keeps its title and description in sync with the spec (Copilot can't edit PRs itself) |
 | `AGENTS.md` | Stack, git policy, rules |
 | `.github/instructions/*.instructions.md` | UI and API conventions |
 | `REVIEW.md` | Review checklist |
@@ -106,5 +108,7 @@ next one after each merge.
 2. **Settings → General → Pull Requests:** squash merging only, and
    optionally *Automatically delete head branches*.
 3. **Settings → Actions → General → Workflow permissions:** read-only, and
-   *Allow GitHub Actions to create and approve pull requests* unticked.
+   *Allow GitHub Actions to create and approve pull requests* **ticked**.
+   The `Story PR` workflow needs it to open and update story PRs; it never
+   approves or merges.
 4. Issues can stay **off**; nothing here uses them.

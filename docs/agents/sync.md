@@ -36,8 +36,8 @@ just compiling.
    the spec.
 5. **Record:** Review log row
    `| n | sync with main (<short sha>) | <conflicts / overlaps> | <resolution> |`,
-   refresh the PR description's verify section, push, and summarise:
-   merged sha, conflicts, adaptations, verify, reviews.
+   refresh the verify section of the spec's PR description block, push,
+   and summarise: merged sha, conflicts, adaptations, verify, reviews.
 
 ## Several story PRs open
 
