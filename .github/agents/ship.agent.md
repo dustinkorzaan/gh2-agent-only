@@ -31,6 +31,30 @@ Read `AGENTS.md` and `REVIEW.md` before anything else.
 - **Push progress after every phase** and tick that phase in the spec's
   `## Progress` section. Your session can be stopped at any time, around an
   hour in; the next session resumes only from what you pushed.
+- **You don't create or edit the PR; your pushes do.** See "The PR" below.
+  Never try `gh pr create`, `gh pr edit` or the GitHub API for it, and never
+  log a missing PR as an open issue.
+
+## The PR
+
+Your session has no GitHub credentials, so you can push commits but can't
+open or edit a PR. The `Story PR` workflow (`.github/workflows/story-pr.yml`)
+does it for you on every push to a `copilot/**` branch that adds a spec:
+
+- **Opens** a draft PR titled `[Story] <spec title>` (the spec's `# ` line)
+  if the branch has none, and keeps the title in sync after that.
+- **Sets the PR description** to the spec's `## PR description` block: the
+  text between `<!-- pr-description:start -->` and
+  `<!-- pr-description:end -->`. Write everything meant for the PR
+  description there (questions, approval requests, the handover), then push.
+  Keep both markers.
+- **Marks the PR ready for review** when that block starts with
+  `✅ Ready for human review`.
+
+So "update the PR description" always means: edit that block in the spec and
+push. If your tools also let you set the PR description directly (for
+example a progress-report tool), pass the same text. The PR appears a few
+seconds after your first push; you don't need its number to continue.
 
 ## Commands
 
@@ -96,14 +120,14 @@ Role: `docs/agents/planner.md`.
 2. If the prompt has no acceptance criteria, derive them from the story and
    mark them `(proposed)`; the human confirms them with the approval. Don't
    spend a question round only to ask for criteria.
-3. Name the PR `[Story] <short title>`.
+3. Title the spec `# <short title>`; the PR becomes `[Story] <short title>`.
 4. Write the spec: problem, goals, non-goals, **testable** acceptance
    criteria (given / when / then), affected areas, assumptions, and the
    `## Plan` (ordered tasks with file paths, and the acceptance-test files).
 5. Push it, then decide:
    - **Questions that change the design?** Ask up to 4, numbered, in the
-     PR description under `## Questions for you` and in your final session
-     message. Give each one lettered options with your recommendation
+     spec's PR description block under `## Questions for you` and in your
+     final session message. Give each one lettered options with your recommendation
      **first and marked**, so a reply can be one letter:
 
      ```
@@ -119,8 +143,8 @@ Role: `docs/agents/planner.md`.
      > `approved` (take all recommendations and build) ·
      > `approved, 1) b 2) <text>` (your answers, then build) ·
      > `answers: 1) b` (update the plan and ask again)
-   - **No questions:** put `## Plan ready for approval` in the PR
-     description with a 5-line summary, and the same reply guide minus the
+   - **No questions:** put `## Plan ready for approval` in the spec's PR
+     description block with a 5-line summary, and the same reply guide minus the
      answers lines. End the session.
 6. **answers:** update the spec with the answers (and fix anything they
    change), clear the questions, then go back to step 5.
@@ -134,7 +158,7 @@ Role: `docs/agents/planner.md`.
 
    Record each under **Assumptions** as "Q1: b (human)" or
    "Q2: recommended (accepted with approval)", and clear
-   `## Questions for you` from the PR description.
+   `## Questions for you` from the spec's PR description block.
 2. If an answer makes the plan impossible or contradicts another answer,
    don't guess: explain it, ask again as in Phase 1 step 5, and end the
    session without ticking `Approved`.
@@ -184,7 +208,8 @@ the test that proves it and the code that implements it. Run
 ## Phase 7: Hand over
 
 1. Set the spec's Status to `shipped` and tick the remaining Progress items.
-2. Rewrite the PR description from `.github/PULL_REQUEST_TEMPLATE.md`:
+2. Rewrite the spec's PR description block from
+   `.github/PULL_REQUEST_TEMPLATE.md`:
    - criteria → evidence table;
    - the verify summary;
    - assumptions, follow-ups and open issues.
@@ -252,8 +277,8 @@ already handed over.
    `Approved` down. Leave the earlier history in the Review log.
 3. **Ask for approval**, exactly as in Phase 1 step 5: questions if the
    request is ambiguous, otherwise `## Revision N ready for approval` in the
-   PR description with what changes. End the session. If the spec's Mode is
-   `hands-off`, record assumptions and continue instead.
+   spec's PR description block with what changes. End the session. If the
+   spec's Mode is `hands-off`, record assumptions and continue instead.
 4. **After `approved`** (with any answers, as in Phase 2), run Phases 2-7 for the revision:
    - acceptance tests only for new and changed criteria;
    - implement only the `rev N` Plan tasks;

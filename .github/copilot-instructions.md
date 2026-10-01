@@ -29,4 +29,7 @@ A PR whose branch adds a spec under `docs/specs/` (not `_template.md`) is a
 ## Every session
 
 - Push progress after each step; a session can be stopped at any time.
+- You can't create or edit PRs (no GitHub credentials); don't try `gh pr`.
+  On a story branch, the `Story PR` workflow opens the PR and copies the
+  spec's `## PR description` block into it on every push.
 - Run `scripts/verify.sh` before you finish. "Done" means `--all` is green.

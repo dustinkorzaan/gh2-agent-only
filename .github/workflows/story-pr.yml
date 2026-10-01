@@ -1,0 +1,75 @@
+name: Story PR
+
+# Opens and updates the draft PR for a story branch, because the Copilot cloud
+# agent has no GitHub credentials in its session: it can push commits, but it
+# can't create a PR or edit one (`gh pr create` / `gh pr edit` fail).
+#
+# On every push to a `copilot/**` branch that adds a spec under docs/specs/:
+# - no open PR for the branch: open a draft PR `[Story] <spec title>`;
+# - open PR: set its title and description from the spec;
+# - the description is the spec's block between `<!-- pr-description:start -->`
+#   and `<!-- pr-description:end -->` (the ship agent keeps it current);
+# - when that block starts with "✅ Ready for human review", mark the PR ready.
+#
+# Needs Settings → Actions → General → "Allow GitHub Actions to create and
+# approve pull requests" ticked. This workflow never approves or merges.
+
+on:
+  push:
+    branches: ["copilot/**"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: story-pr-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  story-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Open or update the story PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          spec=$(git diff --name-only --diff-filter=A origin/main...HEAD -- docs/specs/ \
+            | grep -v '/_template\.md$' | head -n 1 || true)
+          if [ -z "$spec" ]; then
+            echo "No new spec under docs/specs/ on $BRANCH; not a story branch."
+            exit 0
+          fi
+          echo "Spec: $spec"
+
+          title="[Story] $(grep -m1 '^# ' "$spec" | sed 's/^# //')"
+          body_file=$(mktemp)
+          awk '/<!-- pr-description:end -->/{f=0} f{print} /<!-- pr-description:start -->/{f=1}' \
+            "$spec" > "$body_file"
+          if [ ! -s "$body_file" ]; then
+            printf 'Story spec: `%s`\n\nThe ship agent fills this in from the spec.\n' \
+              "$spec" > "$body_file"
+          fi
+
+          pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then
+            gh pr create --draft --base main --head "$BRANCH" \
+              --title "$title" --body-file "$body_file"
+            pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          else
+            gh pr edit "$pr" --title "$title" --body-file "$body_file"
+          fi
+          echo "PR: #$pr"
+
+          if grep -m1 '[^[:space:]]' "$body_file" | grep -q '✅ Ready for human review'; then
+            if [ "$(gh pr view "$pr" --json isDraft --jq .isDraft)" = "true" ]; then
+              gh pr ready "$pr"
+            fi
+          fi

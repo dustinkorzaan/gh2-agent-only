@@ -28,4 +28,4 @@ human. Read-only while judging; fixes happen afterwards as rework.
 - `REWORK` otherwise, with specific, actionable items (file paths).
 
 Record the decision and the criteria → evidence list in the Review log; the
-evidence also goes into the PR description.
+evidence also goes into the spec's PR description block.
