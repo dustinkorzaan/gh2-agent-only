@@ -16,9 +16,12 @@ something you do in the **Agents** tab or a PR comment.
    type the story (template below) and start the task. Copilot opens a draft
    `[Story] …` PR with the spec, then stops with questions or
    **Plan ready for approval**.
-2. **Approve:** read the spec in the PR's *Files changed*, then comment
-   `@copilot approved` on the PR (or `@copilot answers: 1) … 2) …` if it
-   asked something). The whole loop runs.
+2. **Approve:** read the spec in the PR's *Files changed*, then reply
+   `approved`, either in the story's Agents chat or as a PR comment
+   (`@copilot approved`). If it asked questions, each has a recommended
+   answer: plain `approved` accepts them all, or reply
+   `approved, 1) b 2) <text>` to answer and approve in one go. The whole
+   loop runs.
 3. **Done:** when the PR description says **✅ Ready for human review**,
    review it and **Squash and merge**.
 
@@ -41,30 +44,37 @@ Flags: --quick (small single-area change) | --hands-off (no questions, no approv
 
 ## Commands
 
-| When | Where | What you do |
-|---|---|---|
-| **Start** (plan and interview) | **Agents** tab, agent **`ship`** | Type the story. Flags in the prompt: `--quick`, `--hands-off` |
-| **Answer** (only if it asked) | PR comment | `@copilot answers: 1) … 2) …` |
-| **Approve** | PR comment | `@copilot approved` or `@copilot approved, but <tweak>`. The rest of the loop runs in this session |
-| **Continue** (session stopped, e.g. around an hour) | PR comment | `@copilot continue` |
-| **Sync** (after another PR merged into `main`) | PR comment | `@copilot sync`, or `@copilot sync --light` to skip the overlap scan and re-review on a clean merge |
-| **Rework** (fixes within the approved scope, or CI red) | Review comments, then a PR comment | `@copilot rework` |
-| **Revise** (change what the story does, same PR) | PR comment | `@copilot revise: <new or changed behaviour>`. Updates the spec's acceptance criteria, waits for `@copilot approved`, then reruns the loop for the changes |
-| **Merge** | PR | **Squash and merge** (only you; agents never merge) |
+Reply in **either** place: the story's chat in the **Agents** tab, or a
+comment on its PR (there, start with `@copilot`). Both start the next
+session the same way.
+
+| When | What you type |
+|---|---|
+| **Start** (plan and interview) | New task in the **Agents** tab, agent **`ship`**, prompt = the story. Flags: `--quick`, `--hands-off` |
+| **Approve** | `approved`: accepts the recommended answers to any questions and builds |
+| **Approve with answers** | `approved, 1) b 2) <text>`: your answers, then builds |
+| **Approve with a tweak** | `approved, but <tweak>` |
+| **Answer only** (want to see the updated plan first) | `answers: 1) b 2) <text>` |
+| **Continue** (session stopped, e.g. around an hour) | `continue` |
+| **Sync** (after another PR merged into `main`) | `sync`, or `sync --light` to skip the overlap scan and re-review on a clean merge |
+| **Rework** (fixes within the approved scope, or CI red) | Leave PR review comments, then `rework` |
+| **Revise** (change what the story does, same PR) | `revise: <new or changed behaviour>`, then `approved` again |
+| **Merge** | **Squash and merge** on the PR (only you; agents never merge) |
 
 ```
-Agents tab → agent "ship" → story       start: plan / interview
-@copilot answers: …                    answer interview questions
-@copilot approved                      go: runs the full loop
-@copilot continue                      resume after a pause
-@copilot sync                          bring in main after other merges
-@copilot sync --light                  same, skips overlap scan/re-review
-@copilot rework                        fix your review comments / red CI
-@copilot revise: …                     change the story; then approve again
+Agents tab → agent "ship" → story      start: plan / interview
+approved                               accept recommendations, build
+approved, 1) b 2) …                    answer + build in one go
+approved, but …                        build with a tweak
+answers: 1) b                          update the plan, ask again
+continue                               resume after a pause
+sync / sync --light                    bring in main after other merges
+rework                                 fix your review comments / red CI
+revise: …                              change the story; then approve again
 Squash and merge                       you, after final review
 ```
 
-All `@copilot` commands go on the **PR**, not anywhere else.
+On the PR, prefix each with `@copilot` (e.g. `@copilot approved`).
 
 When the agent hands over, the PR description starts with
 **✅ Ready for human review**, or **⚠️ Needs triage** if a gate hit its

@@ -35,26 +35,31 @@ Read `AGENTS.md` and `REVIEW.md` before anything else.
 ## Commands
 
 Your session starts either from a new task in the **Agents** tab (the
-prompt is the story) or from a PR comment that mentions you. Work out which
-command you were given:
+prompt is the story) or from a **follow-up message** on an existing story.
+A follow-up is either a PR comment or a message typed into that story's chat
+in the Agents tab; treat both the same, with or without a leading
+`@copilot`, and case-insensitively. Work out which command you were given:
 
-| Trigger | Command | Go to |
+| Message (follow-up unless stated) | Command | Go to |
 |---|---|---|
 | New task in the Agents tab with the `ship` agent; the prompt is the story (may contain flags) | **start** | Phase 1 |
-| PR comment `@copilot answers: ...` | **answers** | Phase 1, step 4 |
-| PR comment `@copilot approved` (optionally `, but <tweak>`) | **approved** | Phase 2 |
-| PR comment `@copilot continue` | **continue** | Resume |
-| PR comment `@copilot sync` / `@copilot sync --light` | **sync** | Sync |
-| PR comment `@copilot rework` | **rework** | Rework |
-| PR comment `@copilot revise: <change>` | **revise** | Revise |
+| `answers: 1) b 2) <text> ...` | **answers** | Phase 1, step 6 |
+| `approved` | **approved** (open questions take their recommended answers) | Phase 2 |
+| `approved, answers: 1) b 2) ...` (or `approved, 1) b ...`) | **approved with answers** | Phase 2 |
+| `approved, but <tweak>` | **approved with a tweak** | Phase 2 |
+| `continue` | **continue** | Resume |
+| `sync` / `sync --light` | **sync** | Sync |
+| `rework` | **rework** | Rework |
+| `revise: <change>` | **revise** | Revise |
 
-Anything else in a PR comment on a story PR: treat it as a request inside the
-current phase, but still obey the hard rules (an ordinary comment is never an
-approval).
+Anything else in a follow-up on a story: treat it as a request inside the
+current phase, but still obey the hard rules (an ordinary message is never an
+approval; it must start with `approved`).
 
-Copilot only acts on comments from people with write access to the repo, so
-a comment containing `approved` is the human's approval. Record who approved,
-and when, in the spec's Progress.
+Only people with write access to the repo can comment for Copilot or send
+messages in its sessions, so a message starting with `approved` is the
+human's approval. Record who approved, when, and where (PR comment or Agents
+chat) in the spec's Progress.
 
 ## Flags (anywhere in the story prompt)
 
@@ -96,20 +101,45 @@ Role: `docs/agents/planner.md`.
    criteria (given / when / then), affected areas, assumptions, and the
    `## Plan` (ordered tasks with file paths, and the acceptance-test files).
 5. Push it, then decide:
-   - **Questions that change the design?** Put up to 4 numbered questions,
-     each with your recommended answer first, in the PR description under
-     `## Questions for you`, and in your final session message. Tell the
-     human to reply `@copilot answers: 1) ... 2) ...`. End the session.
+   - **Questions that change the design?** Ask up to 4, numbered, in the
+     PR description under `## Questions for you` and in your final session
+     message. Give each one lettered options with your recommendation
+     **first and marked**, so a reply can be one letter:
+
+     ```
+     1. How long should upload links stay valid?
+        a) 15 minutes (recommended)  b) 1 hour  c) 24 hours
+     2. What should the empty-state text say? (free text)
+        Recommended: "No files yet. Upload one to get started."
+     ```
+
+     End with this reply guide, then end the session:
+
+     > Reply here or in the Agents chat:
+     > `approved` (take all recommendations and build) ·
+     > `approved, 1) b 2) <text>` (your answers, then build) ·
+     > `answers: 1) b` (update the plan and ask again)
    - **No questions:** put `## Plan ready for approval` in the PR
-     description with a 5-line summary, and tell the human to reply
-     `@copilot approved`. End the session.
+     description with a 5-line summary, and the same reply guide minus the
+     answers lines. End the session.
 6. **answers:** update the spec with the answers (and fix anything they
    change), clear the questions, then go back to step 5.
 
 ## Phase 2: Approved, run the loop
 
-Tick `Approved` (who, when, any tweak; apply the tweak to the spec first).
-Then run phases 3-6 back to back, in this session, without stopping to ask.
+1. **Apply what came with the approval** to the spec first:
+   - answers given in the message (`1) b`, or free text);
+   - for every open question **not** answered, its recommended answer;
+   - any `but <tweak>`.
+
+   Record each under **Assumptions** as "Q1: b (human)" or
+   "Q2: recommended (accepted with approval)", and clear
+   `## Questions for you` from the PR description.
+2. If an answer makes the plan impossible or contradicts another answer,
+   don't guess: explain it, ask again as in Phase 1 step 5, and end the
+   session without ticking `Approved`.
+3. Otherwise tick `Approved` (who, when, where, answers and tweaks), then
+   run phases 3-6 back to back, in this session, without stopping to ask.
 
 ## Phase 3: Acceptance tests, then implementation
 
@@ -191,7 +221,7 @@ Role: `docs/agents/sync.md`. In short:
 The human reviewed and wants changes **within the approved scope**, or CI is
 red. If a comment asks for new or different behaviour (new or changed
 acceptance criteria), don't build it under rework: say in your summary that
-it needs `@copilot revise: ...`.
+it needs `revise: ...`.
 
 1. Read every unresolved review comment on the PR and the failing check logs
    on the latest commit.
@@ -224,7 +254,7 @@ already handed over.
    request is ambiguous, otherwise `## Revision N ready for approval` in the
    PR description with what changes. End the session. If the spec's Mode is
    `hands-off`, record assumptions and continue instead.
-4. **After `@copilot approved`**, run Phases 2-7 for the revision:
+4. **After `approved`** (with any answers, as in Phase 2), run Phases 2-7 for the revision:
    - acceptance tests only for new and changed criteria;
    - implement only the `rev N` Plan tasks;
    - verify as in Phase 4: `scripts/verify.sh` while fixing, then
