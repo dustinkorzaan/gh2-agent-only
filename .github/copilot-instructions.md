@@ -20,13 +20,12 @@ selected:
 3. Route by phase: before the spec has been approved, follow
    `.github/agents/discover.agent.md`; after approval and an explicit delivery
    start, follow `.github/agents/deliver.agent.md`. Do not infer approval from a
-   ticked `Approved` checkbox or from `author_association`. Independently
-   validate it against the trusted signals the spec records: an approval event
-   from a human with write/maintain/admin permission, tied to the SHA-256 digest
-   of the current **Approved scope** block, plus a separate, explicit event
-   starting delivery. If the approval, the matching digest or the start event is
-   missing or can't be verified, stay in discovery and ask — never start
-   implementation.
+   ticked `Approved` checkbox or from `author_association`. Approval is a PR
+   comment from a human approver (write access) on this story PR, posted after
+   the last change to the spec's **Approved scope** section; delivery also needs
+   a separate, explicit start request. If the approval comment or the start
+   request is missing, or the Approved scope changed after it, stay in
+   discovery and ask — never start implementation.
 4. Check the recorded Risk tier before delivery. High-risk changes are excluded
    from the initial pilot. Stop and request a separate human risk decision and
    evidence of the stronger controls required by the specification; ordinary

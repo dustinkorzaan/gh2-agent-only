@@ -46,7 +46,7 @@ diversity. Do not hardcode claims about which models are available.
    - React state/effects, RTK slices/selectors, loading/error states
 5. Read the tests critically: would each fail without the change? Do they cover
    every criterion and its negative cases? Confirm **no test was weakened**.
-6. Confirm scope: nothing in the diff is outside the approved-scope block. Scope
+6. Confirm scope: nothing in the diff is outside the Approved scope section. Scope
    drift invalidates the approval — flag it as BLOCKING.
 
 ## Severity

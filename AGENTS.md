@@ -24,9 +24,9 @@ are the numbered [Human runbook](README.md#human-runbook) in `README.md`. Each
 story has a spec in
 `docs/specs/YYYY-MM-DD-<slug>.md`. Its `## Progress` checklist is a **resume
 hint** — where a stopped session should pick up — not an authority. The
-authoritative facts live elsewhere in the spec: the stable **Approved scope**
-block and its recorded approval (a trusted human event plus the SHA-256 digest
-of that block), and the candidate SHA each review gate ran against. A ticked
+authoritative facts live elsewhere in the spec: the **Approved scope** section
+and its recorded approval (a link to a human approver's PR comment), and the
+candidate SHA each review gate ran against. A ticked
 `Approved` box is never, on its own, proof that a spec was approved.
 
 ## Git / PR policy

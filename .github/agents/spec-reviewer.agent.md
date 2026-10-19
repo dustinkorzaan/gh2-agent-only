@@ -31,9 +31,9 @@ judges spec quality and testability. It is **read-only** and never approves.
    author could not turn into a failing-first test.
 3. Confirm **negative / edge cases** exist where applicable, and that
    **non-goals** bound the work.
-4. Confirm the **Approved-spec reference** block is explicit and bounded, and
-   is separate from the mutable `## Progress` checklist (approval must bind to
-   stable content, not to a progress record).
+4. Confirm the **Approved scope** section is explicit and bounded, and is
+   separate from the mutable `## Progress` checklist (approval covers the
+   scope, not a progress record).
 5. Sanity-check the **risk tier** against the cross-stack contracts in
    `REVIEW.md` (auth, SAS/blob, schema/migrations, API ↔ UI contract).
 6. Check scope: the spec should not smuggle in work outside the story.
@@ -41,7 +41,7 @@ judges spec quality and testability. It is **read-only** and never approves.
 ## Severity
 
 - **BLOCKING**: an untestable criterion, a missing negative case where one is
-  required, an unbounded approved-scope block, or a risk tier that is clearly
+  required, an unbounded Approved scope section, or a risk tier that is clearly
   wrong.
 - **SHOULD**: a real clarity or completeness gap cheap to fix now.
 - **NIT**: wording. Keep these few.

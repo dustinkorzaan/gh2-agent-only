@@ -23,10 +23,10 @@ only as evidence a human can check**.
 3. **Challenge.** `architect` (design/feasibility) and `spec-reviewer` (testable
    criteria, honest non-goals, correct risk tier) run independent read-only
    reviews. They inform you; they approve nothing.
-4. **Approve + start.** Commit the **Approved scope** block. Approve it as an
-   authenticated human with **write/maintain/admin**, recorded against the
-   block's **SHA-256 digest**. Then, as a **separate explicit event**, launch
-   `deliver` referencing that digest. Approval alone never starts code.
+4. **Approve + start.** Read the spec's **Approved scope** section and approve
+   it with a **PR comment** (`@copilot approved`) as a human with write access.
+   Then, as a **separate explicit request**, start `deliver`. Approval alone
+   never starts code.
 5. **Tests then implementation.** `test-author` writes acceptance tests from the
    spec first. `implementer` is the single writer and adds unit and integration
    code serially, with **≤3 repair rounds per gate** inside a human-owned global
@@ -68,35 +68,27 @@ launching the named agent through the supported UI.
 
 | Command | Where | What it asks for |
 |---|---|---|
-| `approve-spec <digest>` | PR review or authenticated Agents approval | approve the current scope **digest**; record a verifiable event |
-| `deliver <digest>` | Agents tab / PR | start delivery of the already-approved digest |
+| `approved` | PR comment (`@copilot approved`) | approve the spec's current Approved scope; the comment is the approval record |
+| `deliver` | Agents tab / PR | start delivery of the already-approved spec |
 | `rework <candidate-sha> + <findings>` | PR comment | fix within the **same** approved scope; no new approval |
-| `revise` | PR comment | change the scope → new digest, voids approval, needs fresh `approve-spec` **and** new `deliver` |
-| `continue` | Agents tab / PR | resume a stopped session; re-validate approval and digest first |
+| `revise` | PR comment | change the scope → voids approval, needs a fresh `approved` comment **and** a new `deliver` |
+| `continue` | Agents tab / PR | resume a stopped session; re-check approval first |
 | `stop` | Agents tab | ask a session to wind down |
 
-Prefix PR requests to Copilot with `@copilot`. A plain comment can discuss or
-request work but is **not** approval proof. `stop` is "please halt" — in-flight
+Prefix PR requests to Copilot with `@copilot`. Only an explicit `approved`
+comment from a human approver counts as approval; other comments are discussion
+or requests. `stop` is "please halt" — in-flight
 cancellation is **not guaranteed**; confirm the session actually stopped.
 
-## Approval and the scope digest
+## Approval
 
-Approval binds a human decision to the exact **Approved scope** block. It counts
-only as a **current, explicit event** from an **authenticated** actor whose
-**write/maintain/admin** permission is checked against repo permissions, tied to
-the block's digest — never from `author_association`, PR authorship or a ticked
-`Approved` box. If any proof is unavailable or unverifiable, **stop and ask**.
-
-The digest is the **SHA-256 of the committed bytes between the markers** (UTF-8,
-LF, no normalisation, marker lines excluded). All mutable material — approval
-record, Progress ticks, review logs — stays **outside** the markers so the key
-stays stable; the `## Progress` checklist and Review log are a **resume hint**,
-not a control. The canonical, script-free command (a marker-validating `awk`
-over `git show` with `pipefail`) lives in
-[`docs/specs/_template.md`](docs/specs/_template.md); reference it rather than
-duplicating it. The scope digest is **distinct from the candidate SHA** — the
-spec's blob OID changes on every Progress tick, so it is not the approval key,
-and a spec never approves itself.
+Approval is a **PR comment** (`@copilot approved`) on the story PR from a human
+with write access. It covers the spec's **Approved scope** section as it stood
+when the comment was posted; the spec's Approval record links to the comment.
+A ticked `Approved` box, PR authorship or an agent's statement is never
+approval. Any later change to the Approved scope voids the approval and needs a
+new comment. The `## Progress` checklist and Review log are a **resume hint**,
+not a control.
 
 ## Candidate SHA and evidence freshness
 

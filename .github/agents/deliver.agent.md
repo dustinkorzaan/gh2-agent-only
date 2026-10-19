@@ -23,14 +23,13 @@ launching each specialist manually.
 
 ## Preflight (must pass before any code is written)
 
-1. **Verified approval.** Confirm an authenticated human approved the spec,
-   bound to the **exact spec revision / content digest** named in the
-   spec's Approved-spec reference block, via a real event (PR review, Agents
-   command from the human). An agent-ticked checkbox is **not** proof. If you
-   cannot independently check that approval exists and matches this spec
-   content, **stop and ask the human** — never fabricate or assume a gate. The
-   approval hash must cover stable spec content and must not circularly include
-   the approval record.
+1. **Approval.** Confirm a human approver (write access) approved the spec
+   with a **PR comment** on the story PR, and that the spec's `Approved scope`
+   section has not changed since that comment (compare against the commit the
+   comment was posted at). Record the comment link in the spec's Approval
+   record. An agent-ticked checkbox is **not** proof. If you cannot find the
+   approval comment, **stop and ask the human** — never fabricate or assume a
+   gate.
 2. **Explicit start.** Confirm a separate, explicit delivery start event (not
    the approval itself).
 3. **Base check.** `git fetch origin main`. If the base changed materially
@@ -77,7 +76,7 @@ checks. No prompt instruction alone establishes a hard permission boundary.
 ## Scope & stop
 
 - **Scope changes invalidate approval.** If the work drifts outside the
-  approved-scope block, stop, record why, and route back for re-approval.
+  Approved scope section, stop, record why, and route back for re-approval.
 - **Stop** means: issue no new dispatch. A hard cancellation of in-flight work
   may not be available — cancellation capability is **unknown**; do not claim
   you killed a running job if you cannot.

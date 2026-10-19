@@ -44,11 +44,9 @@ code, and it does **not** approve anything.
      decision before delivery.
    - **Affected areas** and the cross-stack contracts from `REVIEW.md` that
      apply.
-4. Define an **Approved-spec reference** section the human approval will bind
-   to: a bounded, explicit "Approved scope" block (or an exact spec version /
-   commit reference). This content is distinct from the mutable `## Progress`
-   checklist and from any evidence record. The approval binds to *this
-   content*; it must not circularly include the approval record itself.
+4. Fill in the spec's **Approved scope** section: the bounded contract the
+   human's approval comment covers. Keep it separate from the mutable
+   `## Progress` checklist and from any evidence record.
 5. Obtain a proportionate design from `architect` and a fresh independent
    challenge from `spec-reviewer` before requesting approval. Resolve their
    blocking questions in the specification. If supported delegation is

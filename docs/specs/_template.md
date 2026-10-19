@@ -4,8 +4,8 @@
 - **Started:** <date>, from the Agents tab · **PR:** #<pr>
 
 `merged` is only ever set by a human squash-merge; no agent sets it. The
-authoritative **Risk tier** is declared inside the digest-covered `Approved
-scope` block, not here, so it cannot be lowered after approval.
+**Risk tier** is declared inside the `Approved scope` section, not here, so
+lowering it after approval counts as a scope change.
 
 ## Progress
 
@@ -26,45 +26,17 @@ approval before writing any code.
 A scope change voids approval: untick everything from Approved down, return
 Status to `discovery`, and record it under `## Revisions` before re-approval.
 
-## Approved scope (stable; digest-covered)
+## Approved scope
 
-Everything between the markers below is the approved contract. Edit it **only**
-during discovery or an approved revision, and keep all mutable material (tick
-lists, review logs, progress, timestamps) **outside** the markers so the digest
-stays stable once approved.
-
-The approval digest is the SHA-256 of the exact bytes **between** the markers,
-as committed — UTF-8, LF line endings, no normalisation, marker lines excluded.
-It is self-contained (it never covers the digest value itself), so the canonical
-way to compute or re-check it needs no project script. The `awk` below both
-**validates** the markers and **extracts** the content: it prints only the lines
-strictly between the markers and exits non-zero on any missing, duplicated or
-out-of-order marker, so `pipefail` makes a malformed block fail the pipeline
-instead of yielding an accepted digest:
-
-```
-set -o pipefail
-git show '<candidate-commit>:docs/specs/<this-file>.md' | awk '
-  /^<!-- approved-scope:start -->$/ { starts++; if (!inside && starts==1) { inside=1; next } bad=1; next }
-  /^<!-- approved-scope:end -->$/   { ends++;   if (inside) { inside=0; next } bad=1; next }
-  inside { print }
-  END { if (starts != 1 || ends != 1 || bad || inside) exit 1 }
-' | sha256sum
-```
-
-Replace the placeholders with the committed candidate and spec path, and commit
-scope edits before computing. Do not capture the content via `$(...)` and
-re-hash it — command substitution strips the trailing newline and would change
-the key; pipe `git show` straight through. At preflight, compare the current
-committed scope digest with the approved one and reject uncommitted scope
-changes; working-tree line-ending conversion must not change the key.
-
-<!-- approved-scope:start -->
+This section is the approved contract. Edit it **only** during discovery or an
+approved revision. Keep mutable material (tick lists, review logs, progress,
+timestamps) in the sections after it. Any edit to this section after approval
+is a scope change and needs a new approval comment.
 
 ### Risk tier
 
-<low | moderate | high — digest-covered so it cannot be lowered after approval
-without voiding the approval. high is excluded from the initial pilot and needs a
+<low | moderate | high — part of the approved scope, so lowering it after
+approval needs a new approval. high is excluded from the initial pilot and needs a
 separate human risk decision; see `## Risk tier` for the detail.>
 
 ### Problem
@@ -106,31 +78,27 @@ independent reviewer to judge feasibility.>
 ### Plan (draft)
 
 Ordered tasks are part of the approved scope; their *completion* is tracked in
-`## Plan status` below (outside the digest), not here.
+`## Plan status` below, not here.
 
 - 1. ...
 
-<!-- approved-scope:end -->
 
 ## Approval record
 
-Approval is a **trusted human event**, not a ticked checkbox and not
-`author_association`.
+Approval is a **PR comment** on this story PR from a human approver (someone
+with write access to the repo), e.g. `@copilot approved`. A ticked checkbox or
+an agent's own statement is not approval.
 
-- **Approved digest:** <sha256 of the Approved scope block>
-- **Approved by:** @<user> — verified **write/maintain/admin** on this repo
-- **Event:** <link to the PR review or Agents-tab approval> · <timestamp>
-- **Candidate commit at approval:** <sha> — external evidence only. The spec's
-  own blob OID changes every time Progress is ticked, so it is **not** the
-  approval key; the digest above is.
+- **Approved by:** @<user> · <link to the approval comment> · <timestamp>
+- **Approved at commit:** <PR head sha when the comment was posted>
 
-Delivery is authorised by a **separate, explicit** human event that references
-the approved digest (approval alone never starts implementation):
+Delivery is started by a **separate, explicit** human request (approval alone
+never starts implementation):
 
-- **Delivery started by:** @<user> · <link> · <timestamp> · references digest <sha256>
+- **Delivery started by:** @<user> · <link> · <timestamp>
 
-If the live Approved scope digest no longer equals the Approved digest, approval
-is **void** — see the scope-change rule under `## Progress`.
+If the `Approved scope` section changes after the approval comment, approval is
+**void**. See the scope-change rule under `## Progress`.
 
 ## Story
 
@@ -144,7 +112,7 @@ Contracts that apply (see `REVIEW.md`): <API contract ↔ RTK, SAS-only blobs, E
 
 ## Plan status
 
-Completion of the approved Plan tasks (mutable; **outside** the digest). Tick
+Completion of the approved Plan tasks (mutable; **outside** the approved scope). Tick
 each when pushed.
 
 - [ ] 1. ...
@@ -155,16 +123,16 @@ each when pushed.
 
 ## Revisions
 
-Each row is an approved scope change: it supersedes the Approval record with a
-new digest.
+Each row is an approved scope change: its approval comment supersedes the
+Approval record.
 
-| Rev | Request (verbatim) | Starting sha | New approved digest | Approved (event, @user, timestamp) |
-|---|---|---|---|---|
+| Rev | Request (verbatim) | Starting sha | Approved (comment link, @user, timestamp) |
+|---|---|---|---|
 
 ## Risk tier
 
-The tier is declared inside the `Approved scope` block above, so approval binds
-to it and it cannot be lowered without voiding the digest.
+The tier is declared inside the `Approved scope` section above, so approval
+covers it and lowering it needs a new approval.
 
 - **low / moderate:** normal delivery.
 - **high:** excluded from the initial pilot. Authentication/authorization

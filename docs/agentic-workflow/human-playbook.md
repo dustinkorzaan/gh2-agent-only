@@ -9,7 +9,7 @@
 
 You make four decisions per story. Everything else is checking evidence:
 
-1. **Is the scope right?** You approve the spec digest.
+1. **Is the scope right?** You approve the spec with a PR comment.
 2. **Go.** You start delivery.
 3. **Is this candidate good enough?** You decide on rework, revise or merge.
 4. **Merge.** You squash-merge.
@@ -87,58 +87,43 @@ approve over a BLOCKING finding without writing down why.
 
 ## 3. Approve the scope (decision 1)
 
-1. Read the spec's **Approved scope** block in *Files changed*. That block,
-   and only that block, is what you approve. Check:
+1. Read the spec's **Approved scope** section in *Files changed*. That
+   section is what you approve. Check:
    - [ ] Every AC is a given/when/then you could test.
    - [ ] Negative cases exist (unauthenticated, empty, oversized, expired SAS…).
    - [ ] Non-goals are listed.
    - [ ] The risk tier matches the change. **`high`** (auth, destructive
          migration, production deploy) is **outside the pilot**: stop here
          and escalate.
-2. Compute the digest of the **committed** block (use the latest commit on
-   the PR branch):
-
-   ```bash
-   git fetch origin <branch>
-   set -o pipefail
-   git show 'origin/<branch>:docs/specs/<file>.md' | awk '
-     /^<!-- approved-scope:start -->$/ { starts++; if (!inside && starts==1) { inside=1; next } bad=1; next }
-     /^<!-- approved-scope:end -->$/   { ends++;   if (inside) { inside=0; next } bad=1; next }
-     inside { print }
-     END { if (starts != 1 || ends != 1 || bad || inside) exit 1 }
-   ' | sha256sum
-   ```
-
-   A non-zero exit means the markers are broken. Ask `discover` to fix them.
-3. Approve with a **PR review** (*Files changed → Review changes → Comment*;
-   the PR is still a draft) whose body is:
+2. Comment on the PR:
 
    ```
-   approve-spec <digest>
+   @copilot approved
    ```
 
-   Use a review, not a plain comment, because a review is an authenticated
-   event tied to your account. Copy the review's link: it goes into the
-   spec's Approval record.
+   That comment is the approval. The agent records its link in the spec's
+   Approval record. If you edit the Approved scope afterwards, or ask for
+   a change to it, approve again with a new comment.
 
 ## 4. Start delivery (decision 2)
 
 This is a **separate** action from approval, on purpose.
 
-**Agents tab → agent `deliver`** on the story PR:
+**Agents tab → agent `deliver`** on the story PR (or comment
+`@copilot deliver`):
 
 ```
-deliver <digest>
-Approval: <link to your approve-spec review>
+deliver
+Approval: <link to your approved comment>
 Start: this message, by @<you>.
-Record both in the spec's Approval record, re-verify the digest against the
-committed Approved scope, check the risk tier, then run the delivery loop.
+Record both in the spec's Approval record, check the Approved scope hasn't
+changed since the approval comment, check the risk tier, then run the
+delivery loop.
 ```
 
 **Expect:** `deliver` fills in the Approval record and ticks Approved in
-Progress. If it **stops and asks** because it can't verify your approval
-itself, that's correct behaviour: reply with the review link and confirm the
-digest.
+Progress. If it **stops and asks** because it can't find your approval
+comment, reply with the comment link.
 
 ## 5. Tests, then implementation
 
@@ -148,17 +133,17 @@ order, one at a time (never two writers at once):
 **agent `test-author`**:
 
 ```
-Write the acceptance tests for the approved spec docs/specs/<file>.md
-(digest <digest>). Test files only, failing first, one test per AC plus its
-negative cases. Push and list criteria → test files.
+Write the acceptance tests for the approved spec docs/specs/<file>.md.
+Test files only, failing first, one test per AC plus its negative cases.
+Push and list criteria → test files.
 ```
 
 **agent `implementer`** (after test-author has pushed):
 
 ```
-Implement the approved plan in docs/specs/<file>.md (digest <digest>), task by
-task. Keep scripts/verify.sh green, ≤3 repairs per failing gate, escalate
-early on repeated failures. Push, then report the candidate SHA.
+Implement the approved plan in docs/specs/<file>.md, task by task. Keep
+scripts/verify.sh green, ≤3 repairs per failing gate, escalate early on
+repeated failures. Push, then report the candidate SHA.
 ```
 
 **You:** watch CI on the PR. Write down the **candidate SHA**: the commit
@@ -215,7 +200,7 @@ Then choose:
 | You want | Do this |
 |---|---|
 | Fixes within the approved scope | PR review comments, then `@copilot rework <sha>: <summary>` (or launch `implementer`). Gates re-run on the new SHA. |
-| A change to what the story does | `@copilot revise: <change>`. This **voids approval**: back to step 3 with a new digest, and step 4 again. |
+| A change to what the story does | `@copilot revise: <change>`. This **voids approval**: back to step 3 for a new `approved` comment, and step 4 again. |
 | To pause | Tell the session `stop`, then confirm in the Agents tab that it actually stopped. |
 | To ship | Step 8. |
 
@@ -234,8 +219,8 @@ Then choose:
 | Situation | What to do |
 |---|---|
 | Session stopped mid-way (timeout, ~1h) | Launch the same agent with `continue`. It resumes from the first unticked Progress item and must re-verify approval first. |
-| `deliver` refuses to start | Read why. Usually the approval link is missing, the digest doesn't match, or the tier is `high`. Fix the cause; don't talk it past the gate. |
-| Digest mismatch after approval | The Approved scope changed. Treat it as a revise: re-approve the new digest. |
+| `deliver` refuses to start | Read why. Usually the approval comment is missing, the Approved scope changed after it, or the tier is `high`. Fix the cause; don't talk it past the gate. |
+| Approved scope edited after approval | Treat it as a revise: approve again with a new comment. |
 | Same failure 2–3 times | Expected escalation. Decide whether the plan is wrong (revise) or a human should fix it. |
 | CI didn't run on the latest push | PRs opened by `GITHUB_TOKEN` may not trigger CI. Push a commit yourself, or re-run from the Checks tab if a run exists. Don't treat a missing run as green. |
 | Reviewer model unknown | Apply the step-0 policy (e.g. add a human review). Record it in the Review log. |

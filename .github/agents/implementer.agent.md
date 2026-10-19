@@ -48,7 +48,7 @@ an explicit start. If you cannot confirm both, stop — do not write code.
 
 ## Scope
 
-If the needed change falls outside the approved-scope block, **stop**: a scope
+If the needed change falls outside the Approved scope section, **stop**: a scope
 change invalidates the approval and must go back for re-approval.
 
 ## Output
