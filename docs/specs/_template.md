@@ -1,10 +1,11 @@
 # <Title>
 
 - **Status:** discovery | approved | awaiting-start | delivering | blocked | ready | merged
-- **Risk tier:** low | moderate | high  (high is excluded from the initial pilot)
 - **Started:** <date>, from the Agents tab · **PR:** #<pr>
 
-`merged` is only ever set by a human squash-merge; no agent sets it.
+`merged` is only ever set by a human squash-merge; no agent sets it. The
+authoritative **Risk tier** is declared inside the digest-covered `Approved
+scope` block, not here, so it cannot be lowered after approval.
 
 ## Progress
 
@@ -35,22 +36,36 @@ stays stable once approved.
 The approval digest is the SHA-256 of the exact bytes **between** the markers,
 as committed — UTF-8, LF line endings, no normalisation, marker lines excluded.
 It is self-contained (it never covers the digest value itself), so the canonical
-way to compute or re-check it needs no project script:
+way to compute or re-check it needs no project script. The `awk` below both
+**validates** the markers and **extracts** the content: it prints only the lines
+strictly between the markers and exits non-zero on any missing, duplicated or
+out-of-order marker, so `pipefail` makes a malformed block fail the pipeline
+instead of yielding an accepted digest:
 
 ```
 set -o pipefail
-git show '<candidate-commit>:docs/specs/<this-file>.md' |
-  awk '/^<!-- approved-scope:end -->$/{f=0} f; /^<!-- approved-scope:start -->$/{f=1}' |
-  sha256sum
+git show '<candidate-commit>:docs/specs/<this-file>.md' | awk '
+  /^<!-- approved-scope:start -->$/ { starts++; if (!inside && starts==1) { inside=1; next } bad=1; next }
+  /^<!-- approved-scope:end -->$/   { ends++;   if (inside) { inside=0; next } bad=1; next }
+  inside { print }
+  END { if (starts != 1 || ends != 1 || bad || inside) exit 1 }
+' | sha256sum
 ```
 
-Replace the placeholders with the committed candidate and spec path; require
-exactly one start marker followed by exactly one end marker before accepting
-the result. Commit scope edits before computing it. At preflight, compare the
-current committed scope digest with the approved one and reject uncommitted
-scope changes; working-tree line-ending conversion must not change the key.
+Replace the placeholders with the committed candidate and spec path, and commit
+scope edits before computing. Do not capture the content via `$(...)` and
+re-hash it — command substitution strips the trailing newline and would change
+the key; pipe `git show` straight through. At preflight, compare the current
+committed scope digest with the approved one and reject uncommitted scope
+changes; working-tree line-ending conversion must not change the key.
 
 <!-- approved-scope:start -->
+
+### Risk tier
+
+<low | moderate | high — digest-covered so it cannot be lowered after approval
+without voiding the approval. high is excluded from the initial pilot and needs a
+separate human risk decision; see `## Risk tier` for the detail.>
 
 ### Problem
 
@@ -147,6 +162,9 @@ new digest.
 |---|---|---|---|---|
 
 ## Risk tier
+
+The tier is declared inside the `Approved scope` block above, so approval binds
+to it and it cannot be lowered without voiding the digest.
 
 - **low / moderate:** normal delivery.
 - **high:** excluded from the initial pilot. Authentication/authorization

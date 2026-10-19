@@ -20,7 +20,8 @@ in this repo.
 Stories are delivered by the custom agents in `.github/agents/`: **`discover`**
 writes the spec, a human approves it, and **`deliver`** (started separately)
 coordinates the specialists to a PR ready for human review. The human steps
-are listed in `README.md`. Each story has a spec in
+are the numbered [Human runbook](README.md#human-runbook) in `README.md`. Each
+story has a spec in
 `docs/specs/YYYY-MM-DD-<slug>.md`. Its `## Progress` checklist is a **resume
 hint** — where a stopped session should pick up — not an authority. The
 authoritative facts live elsewhere in the spec: the stable **Approved scope**
