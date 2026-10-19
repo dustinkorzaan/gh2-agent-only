@@ -8,7 +8,7 @@ name: Story PR
 # - no open PR for the branch: open a draft PR `[Story] <spec title>`;
 # - open PR: set its title and description from the spec;
 # - the description is the spec's block between `<!-- pr-description:start -->`
-#   and `<!-- pr-description:end -->` (the ship agent keeps it current);
+#   and `<!-- pr-description:end -->` (the story agents keep it current);
 # - when that block starts with "✅ Ready for human review", mark the PR ready.
 #
 # Needs Settings → Actions → General → "Allow GitHub Actions to create and
@@ -54,7 +54,7 @@ jobs:
           awk '/<!-- pr-description:end -->/{f=0} f{print} /<!-- pr-description:start -->/{f=1}' \
             "$spec" > "$body_file"
           if [ ! -s "$body_file" ]; then
-            printf 'Story spec: `%s`\n\nThe ship agent fills this in from the spec.\n' \
+            printf 'Story spec: `%s`\n\nThe story agents fill this in from the spec.\n' \
               "$spec" > "$body_file"
           fi
 

@@ -17,9 +17,10 @@ in this repo.
 
 ## How stories are delivered
 
-Stories are delivered by the **`ship`** custom agent
-(`.github/agents/ship.agent.md`) in one Copilot session per step. The human
-commands are listed in `README.md`. Each story has a spec in
+Stories are delivered by the custom agents in `.github/agents/`: **`discover`**
+writes the spec, a human approves it, and **`deliver`** (started separately)
+coordinates the specialists to a PR ready for human review. The human steps
+are listed in `README.md`. Each story has a spec in
 `docs/specs/YYYY-MM-DD-<slug>.md`; its `## Progress` checklist is the source of
 truth for where the work is.
 

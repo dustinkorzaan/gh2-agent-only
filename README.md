@@ -1,29 +1,28 @@
 # gh
 
-User stories are delivered by one GitHub Copilot cloud agent, **`ship`**
-(`.github/agents/ship.agent.md`). Within one session it plans, waits for your
-approval, then writes acceptance tests, implements, verifies, peer-reviews and
-final-reviews (up to 3 rounds each) until the PR is ready for your review. You
-squash-merge.
+User stories are delivered by GitHub Copilot custom agents defined in
+`.github/agents/`: two human-facing agents, **`discover`** and **`deliver`**,
+and six specialists they coordinate. `discover` interviews you and writes a
+spec; you approve it; `deliver` drives tests, implementation, verification,
+review and QA until the PR is ready for your review. You squash-merge.
 
 No PAT, issues or extra secrets are needed: every session starts from
 something you do in the **Agents** tab or a PR comment.
 
-## Start a story: next, next, done
+## Start a story
 
-1. **Start:** open the repo's **Agents** tab
-   (`https://github.com/<owner>/<repo>/agents`), pick the **`ship`** agent,
-   type the story (template below) and start the task. Copilot pushes the
-   spec, the `Story PR` workflow opens a draft `[Story] …` PR for it, and
-   Copilot stops with questions or **Plan ready for approval** in the PR
-   description.
-2. **Approve:** read the spec in the PR's *Files changed*, then reply
-   `approved`, either in the story's Agents chat or as a PR comment
-   (`@copilot approved`). If it asked questions, each has a recommended
-   answer: plain `approved` accepts them all, or reply
-   `approved, 1) b 2) <text>` to answer and approve in one go. The whole
-   loop runs.
-3. **Done:** when the PR description says **✅ Ready for human review**,
+1. **Discover:** open the repo's **Agents** tab
+   (`https://github.com/<owner>/<repo>/agents`), pick the **`discover`**
+   agent, type the story (template below) and start the task. It asks a few
+   questions with recommended answers, gets design and spec reviews from
+   `architect` and `spec-reviewer`, and pushes the spec; the `Story PR`
+   workflow opens a draft `[Story] …` PR for it.
+2. **Approve:** read the spec in the PR's *Files changed* and approve the exact
+   spec revision named in its Approved-spec reference block (a PR review or
+   your own comment). An agent-ticked checkbox is not an approval.
+3. **Start delivery:** as a separate step, start the **`deliver`** agent on the
+   PR. Approval alone never starts implementation.
+4. **Done:** when the PR description says **✅ Ready for human review**,
    review it and **Squash and merge**.
 
 ### Story prompt
@@ -40,88 +39,39 @@ Acceptance criteria:
 Areas: ui / api / infra
 Out of scope: <…>
 Constraints: <auth scopes, schema, blob/SAS, …>
-Flags: --quick (small single-area change) | --hands-off (no questions, no approval wait)
 ```
 
-## Commands
-
-Reply in **either** place: the story's chat in the **Agents** tab, or a
-comment on its PR (there, start with `@copilot`). Both start the next
-session the same way.
-
-| When | What you type |
-|---|---|
-| **Start** (plan and interview) | New task in the **Agents** tab, agent **`ship`**, prompt = the story. Flags: `--quick`, `--hands-off` |
-| **Approve** | `approved`: accepts the recommended answers to any questions and builds |
-| **Approve with answers** | `approved, 1) b 2) <text>`: your answers, then builds |
-| **Approve with a tweak** | `approved, but <tweak>` |
-| **Answer only** (want to see the updated plan first) | `answers: 1) b 2) <text>` |
-| **Continue** (session stopped, e.g. around an hour) | `continue` |
-| **Sync** (after another PR merged into `main`) | `sync`, or `sync --light` to skip the overlap scan and re-review on a clean merge |
-| **Rework** (fixes within the approved scope, or CI red) | Leave PR review comments, then `rework` |
-| **Revise** (change what the story does, same PR) | `revise: <new or changed behaviour>`, then `approved` again |
-| **Merge** | **Squash and merge** on the PR (only you; agents never merge) |
-
-```
-Agents tab → agent "ship" → story      start: plan / interview
-approved                               accept recommendations, build
-approved, 1) b 2) …                    answer + build in one go
-approved, but …                        build with a tweak
-answers: 1) b                          update the plan, ask again
-continue                               resume after a pause
-sync / sync --light                    bring in main after other merges
-rework                                 fix your review comments / red CI
-revise: …                              change the story; then approve again
-Squash and merge                       you, after final review
-```
-
-On the PR, prefix each with `@copilot` (e.g. `@copilot approved`).
-
-When the agent hands over, the PR description starts with
-**✅ Ready for human review**, or **⚠️ Needs triage** if a gate hit its
-3-round cap (details under *Open issues* in the spec).
-
-With several story PRs open, merge them one at a time and `@copilot sync` the
-next one after each merge.
-
-## Staged: a proposed multi-agent model (not active yet)
-
-Eight **draft** agent definitions are staged under `docs/agents/*.agent.md` as
-a proposed future delivery model. They are **not registered and not active**.
-The **`ship`** agent above remains the only live path until a human explicitly
-transitions, and these drafts do **not** override `AGENTS.md`, `REVIEW.md`, the
-git/PR policy, or any repo rule.
+## Agents
 
 Two human-facing agents and six specialists:
 
 | Definition | Facing | Role |
 |---|---|---|
-| [`discover`](docs/agents/discover.agent.md) | human | interview, write an approval-ready spec (criteria, negative cases, non-goals, risk) |
-| [`spec-reviewer`](docs/agents/spec-reviewer.agent.md) | specialist | independent read-only spec review before approval |
-| [`architect`](docs/agents/architect.agent.md) | specialist | independent read-only design/feasibility review before approval |
-| [`deliver`](docs/agents/deliver.agent.md) | human | preflight approval + explicit start, then drive delivery to green `verify.sh --all` |
-| [`test-author`](docs/agents/test-author.agent.md) | specialist | write acceptance tests from the approved spec, early |
-| [`implementer`](docs/agents/implementer.agent.md) | specialist | the single writer; implement the plan serially |
-| [`peer-reviewer`](docs/agents/peer-reviewer.agent.md) | specialist | read-only code review at the exact candidate SHA |
-| [`qa`](docs/agents/qa.agent.md) | specialist | exercise the running system from the spec at that SHA |
+| [`discover`](.github/agents/discover.agent.md) | human | interview, write an approval-ready spec (criteria, negative cases, non-goals, risk) |
+| [`spec-reviewer`](.github/agents/spec-reviewer.agent.md) | specialist | independent read-only spec review before approval |
+| [`architect`](.github/agents/architect.agent.md) | specialist | independent read-only design/feasibility review before approval |
+| [`deliver`](.github/agents/deliver.agent.md) | human | preflight approval + explicit start, then drive delivery to green `verify.sh --all` |
+| [`test-author`](.github/agents/test-author.agent.md) | specialist | write acceptance tests from the approved spec, early |
+| [`implementer`](.github/agents/implementer.agent.md) | specialist | the single writer; implement the plan serially |
+| [`peer-reviewer`](.github/agents/peer-reviewer.agent.md) | specialist | read-only code review at the exact candidate SHA |
+| [`qa`](.github/agents/qa.agent.md) | specialist | exercise the running system from the spec at that SHA |
 
-**Manual registration required.** To try one, a human must copy the file into
-the repository's custom-agent location (`.github/agents/`). Copying is a manual
-action and recognition is **not guaranteed**: registration only works if the
-file is a valid custom-agent definition that the platform resolves, and there
-is no symlink or auto-discovery promise. Humans always approve the spec and
-always merge; agents never self-approve or merge. Many runtime behaviours
+Humans always approve the spec and always merge; agents never self-approve or
+merge. If automatic handoff to a specialist isn't available, the human-facing
+agent asks you to launch that specialist yourself. Many runtime behaviours
 (agent selection, handoff, session/workspace isolation, tool scopes, Actions
 events, budgets) are **unknown until demonstrated** and are flagged as such in
 each definition.
+
+With several story PRs open, merge them one at a time and bring `main` into
+the next one (a merge commit) after each merge.
 
 ## How it fits together
 
 | File | Purpose |
 |---|---|
-| `.github/agents/ship.agent.md` | The agent: phases, commands, hard rules |
-| `docs/agents/*.md` | Checklists for each phase: planner, test-author, implementer, peer-reviewer, final-reviewer, sync |
-| `.github/copilot-instructions.md` | Makes every `@copilot` session on a story PR follow `ship` |
+| `.github/agents/*.agent.md` | The agents: mandate, method, hard rules for each role |
+| `.github/copilot-instructions.md` | Routes every `@copilot` session on a story PR to `discover` or `deliver` |
 | `.github/workflows/story-pr.yml` | Opens the draft `[Story]` PR and keeps its title and description in sync with the spec (Copilot can't edit PRs itself) |
 | `AGENTS.md` | Stack, git policy, rules |
 | `.github/instructions/*.instructions.md` | UI and API conventions |

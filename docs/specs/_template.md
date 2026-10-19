@@ -2,24 +2,23 @@
 
 - **Status:** draft | approved | in-progress | shipped | needs-triage
 - **Started:** <date>, from the Agents tab · **PR:** #<pr>
-- **Mode:** interactive | hands-off | quick
 
 ## Progress
 
-The `ship` agent ticks each item only after it is finished and pushed. A new
+The story agents (`discover`, then `deliver`) tick each item only after it is finished and pushed. A new
 session resumes from the first unticked item.
 
 - [ ] Spec and plan written
-- [ ] Approved (by @<user>, <date>, tweaks: <none>)
+- [ ] Approved (by @<user>, <date>, spec revision: <sha>)
 - [ ] Acceptance tests written
 - [ ] Implementation (all Plan tasks ticked)
 - [ ] Verify gate green
 - [ ] Peer review clean
-- [ ] Final review: SHIP
+- [ ] QA clean
 - [ ] PR description updated, ready for human review
 
-`@copilot revise: ...` unticks everything from Approved down; see
-`## Revisions`.
+A scope change unticks everything from Approved down and needs renewed
+approval; see `## Revisions`.
 
 ## Story
 

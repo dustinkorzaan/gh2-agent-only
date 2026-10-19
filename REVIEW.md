@@ -1,7 +1,7 @@
 # REVIEW.md
 
-The review checklist for every change to this repo. The `ship` agent uses it
-in its peer-review and final-review phases; human reviewers use it too. Each
+The review checklist for every change to this repo. The `peer-reviewer`
+and `qa` agents use it; human reviewers use it too. Each
 item is a rule; breaking one is a **BLOCKING** finding unless marked
 otherwise.
 

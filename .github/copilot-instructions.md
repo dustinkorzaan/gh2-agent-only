@@ -3,28 +3,26 @@
 Read `AGENTS.md` first. It has the stack, the rules and the one check command
 (`scripts/verify.sh`).
 
-## Story PRs follow the ship agent
+## Story PRs follow the story agents
 
-Stories start in the repo's **Agents** tab: a new task with the `ship` agent,
-where the prompt is the story. There are no issues in this repo.
+Stories start in the repo's **Agents** tab: a new task with the `discover`
+agent, where the prompt is the story. There are no issues in this repo.
 
 A PR whose branch adds a spec under `docs/specs/` (not `_template.md`) is a
-**story PR**. On a story PR, every session follows
-`.github/agents/ship.agent.md`, even when this session wasn't started with the
-`ship` agent selected:
+**story PR**. On a story PR, every session follows the matching definition in
+`.github/agents/`, even when this session wasn't started with that agent
+selected:
 
 1. Run `git fetch origin main` (the checkout may be shallow), then find the spec:
    `git diff --name-only --diff-filter=A origin/main...HEAD -- docs/specs/`.
 2. Read its `## Progress` checklist and Review log.
-3. Treat the message that started this session (a PR comment or a
-   follow-up typed in the Agents tab chat, with or without `@copilot`) as a
-   ship command: `answers: ...`, `approved` (optionally with answers or
-   `but <tweak>`), `continue`, `sync`, `sync --light`, `rework`,
-   `revise: ...`. Anything else is a request within the current phase.
-4. Follow the matching section of `.github/agents/ship.agent.md`.
+3. Before the spec's Progress shows `Approved`, follow
+   `.github/agents/discover.agent.md`. After it, follow
+   `.github/agents/deliver.agent.md`, whose preflight needs a verified human
+   approval and a separate, explicit start; if either is missing, stop and ask.
 
-**Never write code on a story PR before the spec's Progress shows
-`Approved`** (or the spec's Mode is `hands-off`).
+**Never write code on a story PR before an authenticated human has approved
+the spec** and explicitly started delivery.
 
 ## Every session
 

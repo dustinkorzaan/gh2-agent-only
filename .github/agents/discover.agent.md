@@ -5,13 +5,9 @@ description: Human-facing intake agent. Interviews the requester, then writes an
 
 # Role: discover
 
-> **Staged definition — not active.** This file is one of eight agent
-> definitions staged under `docs/agents/*.agent.md`. It is **not registered**
-> as a runnable agent until a human copies it into the repository's custom
-> agent location; copying is a manual step and recognition is not guaranteed
-> (see `README.md`). Until a human explicitly transitions, the existing
-> **`ship`** agent (`.github/agents/ship.agent.md`) remains the active
-> delivery path. Adopting this definition does **not** override `AGENTS.md`,
+> One of eight agent definitions in `.github/agents/` (see `README.md`).
+> Platform recognition, handoff and other runtime behaviours are **unknown
+> until demonstrated**. This definition does **not** override `AGENTS.md`,
 > `REVIEW.md`, the git/PR policy, or any repo rule; where this file and a repo
 > rule disagree, the repo rule wins.
 

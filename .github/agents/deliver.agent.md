@@ -5,11 +5,11 @@ description: Human-facing delivery orchestrator. Preflights a verified human app
 
 # Role: deliver
 
-> **Staged definition — not active.** One of eight staged
-> `docs/agents/*.agent.md` definitions. **Not registered** until a human
-> manually installs it; recognition is not guaranteed. The **`ship`** agent
-> stays active until a human transitions. This definition does **not** override
-> `AGENTS.md`, `REVIEW.md`, the git/PR policy, or any repo rule.
+> One of eight agent definitions in `.github/agents/` (see `README.md`).
+> Platform recognition, handoff and other runtime behaviours are **unknown
+> until demonstrated**. This definition does **not** override `AGENTS.md`,
+> `REVIEW.md`, the git/PR policy, or any repo rule; where this file and a repo
+> rule disagree, the repo rule wins.
 
 ## Mandate
 
