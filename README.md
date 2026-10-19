@@ -84,6 +84,37 @@ When the agent hands over, the PR description starts with
 With several story PRs open, merge them one at a time and `@copilot sync` the
 next one after each merge.
 
+## Staged: a proposed multi-agent model (not active yet)
+
+Eight **draft** agent definitions are staged under `docs/agents/*.agent.md` as
+a proposed future delivery model. They are **not registered and not active**.
+The **`ship`** agent above remains the only live path until a human explicitly
+transitions, and these drafts do **not** override `AGENTS.md`, `REVIEW.md`, the
+git/PR policy, or any repo rule.
+
+Two human-facing agents and six specialists:
+
+| Definition | Facing | Role |
+|---|---|---|
+| [`discover`](docs/agents/discover.agent.md) | human | interview, write an approval-ready spec (criteria, negative cases, non-goals, risk) |
+| [`spec-reviewer`](docs/agents/spec-reviewer.agent.md) | specialist | independent read-only spec review before approval |
+| [`architect`](docs/agents/architect.agent.md) | specialist | independent read-only design/feasibility review before approval |
+| [`deliver`](docs/agents/deliver.agent.md) | human | preflight approval + explicit start, then drive delivery to green `verify.sh --all` |
+| [`test-author`](docs/agents/test-author.agent.md) | specialist | write acceptance tests from the approved spec, early |
+| [`implementer`](docs/agents/implementer.agent.md) | specialist | the single writer; implement the plan serially |
+| [`peer-reviewer`](docs/agents/peer-reviewer.agent.md) | specialist | read-only code review at the exact candidate SHA |
+| [`qa`](docs/agents/qa.agent.md) | specialist | exercise the running system from the spec at that SHA |
+
+**Manual registration required.** To try one, a human must copy the file into
+the repository's custom-agent location (`.github/agents/`). Copying is a manual
+action and recognition is **not guaranteed**: registration only works if the
+file is a valid custom-agent definition that the platform resolves, and there
+is no symlink or auto-discovery promise. Humans always approve the spec and
+always merge; agents never self-approve or merge. Many runtime behaviours
+(agent selection, handoff, session/workspace isolation, tool scopes, Actions
+events, budgets) are **unknown until demonstrated** and are flagged as such in
+each definition.
+
 ## How it fits together
 
 | File | Purpose |
