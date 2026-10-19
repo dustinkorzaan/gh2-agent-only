@@ -12,7 +12,7 @@ in this repo.
 | Infra | Bicep / ACA manifests | Azure Container Apps, Entra ID, Azure SQL DB |
 | Files | — | Blob access only via SAS URIs issued by the API's managed identity (file bytes never transit the API) |
 
-`/ui` and `/api` don't exist yet; the first stories create them. CI and
+`/ui` and `/api` now exist (earlier stories created them). CI and
 `scripts/verify.sh` skip an area until it exists.
 
 ## How stories are delivered
@@ -21,8 +21,12 @@ Stories are delivered by the custom agents in `.github/agents/`: **`discover`**
 writes the spec, a human approves it, and **`deliver`** (started separately)
 coordinates the specialists to a PR ready for human review. The human steps
 are listed in `README.md`. Each story has a spec in
-`docs/specs/YYYY-MM-DD-<slug>.md`; its `## Progress` checklist is the source of
-truth for where the work is.
+`docs/specs/YYYY-MM-DD-<slug>.md`. Its `## Progress` checklist is a **resume
+hint** — where a stopped session should pick up — not an authority. The
+authoritative facts live elsewhere in the spec: the stable **Approved scope**
+block and its recorded approval (a trusted human event plus the SHA-256 digest
+of that block), and the candidate SHA each review gate ran against. A ticked
+`Approved` box is never, on its own, proof that a spec was approved.
 
 ## Git / PR policy
 

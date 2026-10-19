@@ -38,3 +38,14 @@ otherwise.
 - [ ] The diff contains only what the spec asks for: no drive-by refactors, debug leftovers, or commented-out code.
 - [ ] `AGENTS.md` / `README.md` are updated when setup, env vars or topology change.
 - [ ] *(SHOULD)* Names, comment density and idioms match the surrounding code.
+
+## Gates and evidence (story PRs)
+
+These items keep the delivery gates honest. They are **advisory**: no agent
+verdict approves or merges a PR — a human does.
+
+- [ ] Approval is tied to a trusted human event (actor with write/maintain/admin permission, timestamp) and the SHA-256 digest of the exact **Approved scope** block — not a ticked checkbox or `author_association`.
+- [ ] Every review/QA gate records the **candidate SHA** it ran against, and that SHA matches the commit under review (stale evidence from an earlier SHA doesn't count).
+- [ ] Peer review is treated as a second, independent opinion. A claim that it ran on a *different* model is unverified unless a human confirms it; when the model is unknown, prefer a human high-capability review and say so rather than asserting independence.
+- [ ] QA/UX evidence states the data used (synthetic only — no production or personal data), the baseline it compared against, and any limitation; screenshots/recordings are retained as linked artifacts, not invented.
+- [ ] Capability and routing claims in the PR are not overstated: runtime behaviours not yet demonstrated are flagged as unverified rather than presented as guaranteed.
