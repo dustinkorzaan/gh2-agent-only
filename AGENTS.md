@@ -12,16 +12,23 @@ in this repo.
 | Infra | Bicep / ACA manifests | Azure Container Apps, Entra ID, Azure SQL DB |
 | Files | — | Blob access only via SAS URIs issued by the API's managed identity (file bytes never transit the API) |
 
-`/ui` and `/api` don't exist yet; the first stories create them. CI and
+`/ui` and `/api` now exist (earlier stories created them). CI and
 `scripts/verify.sh` skip an area until it exists.
 
 ## How stories are delivered
 
-Stories are delivered by the **`ship`** custom agent
-(`.github/agents/ship.agent.md`) in one Copilot session per step. The human
-commands are listed in `README.md`. Each story has a spec in
-`docs/specs/YYYY-MM-DD-<slug>.md`; its `## Progress` checklist is the source of
-truth for where the work is.
+Stories are delivered by the custom agents in `.github/agents/`: **`discover`**
+writes the spec, a human approves it, and **`deliver`** (started separately)
+coordinates the specialists to a PR ready for human review. The three human
+gates are summarised in [`README.md`](README.md) and the step-by-step guide is
+the [human playbook](docs/agentic-workflow/human-playbook.md). Each
+story has a spec in
+`docs/specs/YYYY-MM-DD-<slug>.md`. Its `## Progress` checklist is a **resume
+hint** — where a stopped session should pick up — not an authority. The
+authoritative facts live elsewhere in the spec: the **Approved scope** section
+and its recorded approval (a link to a human approver's PR comment), and the
+candidate SHA each review gate ran against. A ticked
+`Approved` box is never, on its own, proof that a spec was approved.
 
 ## Git / PR policy
 

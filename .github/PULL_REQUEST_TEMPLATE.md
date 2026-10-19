@@ -1,5 +1,5 @@
 <!--
-  Story PRs: the `ship` agent fills this in. It starts the description with
+  Story PRs: the `deliver` agent fills this in. It starts the description with
   "✅ Ready for human review" or "⚠️ Needs triage" when it hands over.
 -->
 

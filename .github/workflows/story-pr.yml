@@ -4,15 +4,25 @@ name: Story PR
 # agent has no GitHub credentials in its session: it can push commits, but it
 # can't create a PR or edit one (`gh pr create` / `gh pr edit` fail).
 #
-# On every push to a `copilot/**` branch that adds a spec under docs/specs/:
+# On every push to a `copilot/**` branch that adds exactly one spec under
+# docs/specs/:
 # - no open PR for the branch: open a draft PR `[Story] <spec title>`;
 # - open PR: set its title and description from the spec;
 # - the description is the spec's block between `<!-- pr-description:start -->`
-#   and `<!-- pr-description:end -->` (the ship agent keeps it current);
-# - when that block starts with "✅ Ready for human review", mark the PR ready.
+#   and `<!-- pr-description:end -->` (the story agents keep it current);
+# - when the first non-empty line of that block is exactly
+#   "✅ Ready for human review", publish the draft; otherwise (e.g. after a
+#   revision removed the marker) return a published PR to draft.
+#
+# This only publishes or un-publishes a draft to mirror the spec's own
+# description block. Publication is NOT an authorization or approval signal:
+# it does not gate who may approve the spec or start delivery, and this
+# workflow never approves, reviews or merges. Humans still approve the spec and
+# squash-merge. A story branch is expected to add exactly one spec; if it adds
+# more than one, the workflow fails loudly rather than guessing which to use.
 #
 # Needs Settings → Actions → General → "Allow GitHub Actions to create and
-# approve pull requests" ticked. This workflow never approves or merges.
+# approve pull requests" ticked. No extra Actions or dependencies are used.
 
 on:
   push:
@@ -41,12 +51,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          spec=$(git diff --name-only --diff-filter=A origin/main...HEAD -- docs/specs/ \
-            | grep -v '/_template\.md$' | head -n 1 || true)
-          if [ -z "$spec" ]; then
+          # A story branch adds exactly one spec (ignoring the template). Fail
+          # loudly on more than one rather than picking an arbitrary spec.
+          specs=$(git diff --name-only --diff-filter=A origin/main...HEAD -- docs/specs/ \
+            | grep -v '/_template\.md$' || true)
+          count=$(printf '%s' "$specs" | grep -c . || true)
+          if [ "$count" -eq 0 ]; then
             echo "No new spec under docs/specs/ on $BRANCH; not a story branch."
             exit 0
           fi
+          if [ "$count" -gt 1 ]; then
+            echo "More than one new spec added on $BRANCH; this workflow supports exactly one story spec per branch:" >&2
+            printf '%s\n' "$specs" >&2
+            exit 1
+          fi
+          spec="$specs"
           echo "Spec: $spec"
 
           title="[Story] $(grep -m1 '^# ' "$spec" | sed 's/^# //')"
@@ -54,7 +73,7 @@ jobs:
           awk '/<!-- pr-description:end -->/{f=0} f{print} /<!-- pr-description:start -->/{f=1}' \
             "$spec" > "$body_file"
           if [ ! -s "$body_file" ]; then
-            printf 'Story spec: `%s`\n\nThe ship agent fills this in from the spec.\n' \
+            printf 'Story spec: `%s`\n\nThe story agents fill this in from the spec.\n' \
               "$spec" > "$body_file"
           fi
 
@@ -68,8 +87,18 @@ jobs:
           fi
           echo "PR: #$pr"
 
-          if grep -m1 '[^[:space:]]' "$body_file" | grep -q '✅ Ready for human review'; then
-            if [ "$(gh pr view "$pr" --json isDraft --jq .isDraft)" = "true" ]; then
+          # Publish or un-publish the draft to mirror the spec's description
+          # block. The marker must be the exact first non-empty line of the
+          # block, not merely present somewhere in it. This is cosmetic: it
+          # never authorizes approval, delivery or merge.
+          first_line=$(grep -m1 '[^[:space:]]' "$body_file" || true)
+          is_draft=$(gh pr view "$pr" --json isDraft --jq .isDraft)
+          if [ "$first_line" = "✅ Ready for human review" ]; then
+            if [ "$is_draft" = "true" ]; then
               gh pr ready "$pr"
+            fi
+          else
+            if [ "$is_draft" = "false" ]; then
+              gh pr ready "$pr" --undo
             fi
           fi
