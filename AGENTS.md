@@ -19,8 +19,9 @@ in this repo.
 
 Stories are delivered by the custom agents in `.github/agents/`: **`discover`**
 writes the spec, a human approves it, and **`deliver`** (started separately)
-coordinates the specialists to a PR ready for human review. The human steps
-are the numbered [Human runbook](README.md#human-runbook) in `README.md`. Each
+coordinates the specialists to a PR ready for human review. The three human
+gates are summarised in [`README.md`](README.md) and the step-by-step guide is
+the [human playbook](docs/agentic-workflow/human-playbook.md). Each
 story has a spec in
 `docs/specs/YYYY-MM-DD-<slug>.md`. Its `## Progress` checklist is a **resume
 hint** — where a stopped session should pick up — not an authority. The

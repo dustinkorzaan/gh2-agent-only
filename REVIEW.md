@@ -44,8 +44,9 @@ otherwise.
 These items keep the delivery gates honest. They are **advisory**: no agent
 verdict approves or merges a PR — a human does.
 
-- [ ] Approval is a linked PR comment from a human approver (write access), posted after the last change to the spec's **Approved scope** section — not a ticked checkbox or `author_association`.
-- [ ] Every review/QA gate records the **candidate SHA** it ran against, and that SHA matches the commit under review (stale evidence from an earlier SHA doesn't count).
+- [ ] Approval is a linked PR comment `@copilot approved <full-head-sha>` from a human with write/maintain/admin permission (verified by permission, not `author_association` or a ticked checkbox; bots never approve), posted after the last change to the spec's **Approved scope**, and delivery was started by a separate explicit human request.
+- [ ] Acceptance tests came **before** production code: each AC has a test authored first, and no production edit predates a verified approval **and** start.
+- [ ] Every review/QA gate records the **candidate SHA** it ran against, and that SHA matches the commit under review. A later HEAD reuses evidence only for a bookkeeping-only change to the story spec outside Approved scope, recorded as an explicit `candidate → HEAD` mapping; any other tracked-file change makes the evidence stale.
 - [ ] Peer review is treated as a second, independent opinion. A claim that it ran on a *different* model is unverified unless a human confirms it; when the model is unknown, prefer a human high-capability review and say so rather than asserting independence.
 - [ ] QA/UX evidence states the data used (synthetic only — no production or personal data), the baseline it compared against, and any limitation; screenshots/recordings are retained as linked artifacts, not invented.
 - [ ] Capability and routing claims in the PR are not overstated: runtime behaviours not yet demonstrated are flagged as unverified rather than presented as guaranteed.

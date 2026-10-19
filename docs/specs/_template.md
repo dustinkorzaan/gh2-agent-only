@@ -1,11 +1,14 @@
 # <Title>
 
-- **Status:** discovery | approved | awaiting-start | delivering | blocked | ready | merged
+- **Status:** discovery | approved | awaiting-start | delivering | blocked | ready
 - **Started:** <date>, from the Agents tab · **PR:** #<pr>
 
-`merged` is only ever set by a human squash-merge; no agent sets it. The
-**Risk tier** is declared inside the `Approved scope` section, not here, so
-lowering it after approval counts as a scope change.
+The **PR merge itself is authoritative** for "merged" — a squash-merge does not
+edit this file, so no session needs to set a `merged` status. A delivery session
+leaves Status at `ready`; a human may optionally note the merge here or in an
+external record after the fact. The **Risk tier** is declared inside the
+`Approved scope` section, not here, so lowering it after approval counts as a
+scope change.
 
 ## Progress
 
@@ -75,6 +78,13 @@ independent reviewer to judge feasibility.>
 
 <How each AC will be proven: which tests/checks, what evidence counts.>
 
+### Acceptance test files
+
+Planned acceptance-test paths are part of the approved contract (edited only
+during discovery / an approved revision).
+
+- <path>
+
 ### Plan (draft)
 
 Ordered tasks are part of the approved scope; their *completion* is tracked in
@@ -85,12 +95,16 @@ Ordered tasks are part of the approved scope; their *completion* is tracked in
 
 ## Approval record
 
-Approval is a **PR comment** on this story PR from a human approver (someone
-with write access to the repo), e.g. `@copilot approved`. A ticked checkbox or
-an agent's own statement is not approval.
+Approval is a **PR comment** on this story PR of the form
+`@copilot approved <full-head-sha>`, posted by a **human with write/maintain/admin
+permission** (verified by permission, not `author_association`); bots never
+approve. The `<full-head-sha>` is the current full PR head SHA the agent supplied —
+no human computes a hash. A ticked checkbox or an agent's own statement is not
+approval. A coordinator may transcribe this verified event here (recording is not
+granting).
 
 - **Approved by:** @<user> · <link to the approval comment> · <timestamp>
-- **Approved at commit:** <PR head sha when the comment was posted>
+- **Approved at commit:** <full head sha named in the comment>
 
 Delivery is started by a **separate, explicit** human request (approval alone
 never starts implementation):
@@ -117,10 +131,6 @@ each when pushed.
 
 - [ ] 1. ...
 
-### Acceptance test files
-
-- <path>
-
 ## Revisions
 
 Each row is an approved scope change: its approval comment supersedes the
@@ -145,10 +155,14 @@ covers it and lowering it needs a new approval.
 
 Each gate is an independent second opinion, **not** an approval or merge.
 Record the **candidate SHA** it ran against — a verdict on a stale SHA does not
-count. Peer-review independence, including any claim it ran on a different or
-higher-capability model, is **unverified** unless a human confirms it.
+count. When a later HEAD only adds a **bookkeeping-only** change to this spec
+outside `Approved scope`, note the simple `candidate → HEAD` mapping (optional
+free-text; no schema) rather than re-running; any other tracked-file change
+re-runs the affected gate. Peer-review independence, including any claim it ran
+on a different or higher-capability model, is **unverified** unless a human
+confirms it.
 
-| Round | Gate | Candidate sha | Findings | Resolution (commit / reason) |
+| Round | Gate | Candidate sha (→ HEAD if bookkeeping-only) | Findings | Resolution (commit / reason) |
 |---|---|---|---|---|
 
 Repairs are **soft-capped** at 3 rounds per gate plus a global budget across
