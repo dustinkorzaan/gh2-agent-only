@@ -111,12 +111,16 @@ Be clear-eyed about this table before the pilot. Most controls are, for now,
 These come from the PR #7 peer review. The playbook includes manual
 workarounds for each one.
 
-1. **How the agent finds the approval.** A Copilot session has no GitHub
-   credentials (`copilot-instructions.md`), so `deliver` may not be able to
-   look up PR comments itself. The simplest path: the human's
-   `@copilot approved` comment starts the session, so the session receives
-   the comment directly and records its link. Confirm in the pilot that this
-   works, and that only users with write access can trigger `@copilot`.
+1. **Comment approval has no clear owner or version.** Sessions can probably
+   read PR comments through the default read-only GitHub MCP server, but they
+   can't tell who is an approver. And `discover`, which handles a session
+   before delivery, may not record approval. Candidate fix: the comment names
+   the head it approves (`@copilot approved <head-sha>`). Only the session that
+   comment triggers counts as approval (Copilot only acts for users with write
+   access). That session writes only the Approval record, and `deliver` checks
+   that `## Approved scope` hasn't changed since `<head-sha>`. A second risk:
+   a workflow edited on the branch could post the comment itself, so keep
+   workflow-run approval on for Copilot pushes. See review round 2.
 2. **Handoff is unproven,** so a story can take up to eight separately launched
    sessions. Candidate fix: let `deliver` run `test-author` and `implementer` in
    its own session by reading their definitions (as `ship` did with role

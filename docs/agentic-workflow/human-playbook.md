@@ -18,15 +18,18 @@ You make four decisions per story. Everything else is checking evidence:
 
 ## 0. One-time setup (repo admin)
 
-- [ ] **Settings → Copilot → Cloud agent:** enabled; *Require approval for
-      workflow runs* off.
+- [ ] **Settings → Copilot → Cloud agent:** enabled. Leave *Require approval
+      for workflow runs* **on** until the review's round-2 finding 1 is fixed:
+      with it off, a Copilot push that edits a workflow runs that edit
+      immediately, with write access to the PR.
 - [ ] **Settings → Actions → General → Workflow permissions:** read-only, with
       *Allow GitHub Actions to create and approve pull requests* ticked
       (`story-pr.yml` needs it to open PRs; it never approves).
 - [ ] **Settings → General → Pull Requests:** squash merging only.
 - [ ] **Branch protection on `main`:** require a PR, require the CI checks
-      (`gh-build-and-test-success` jobs, CodeQL, E2E), and require one human
-      approving review. This is what turns "humans merge" from a convention into
+      that report on every PR (the `gh-build-and-test-success` jobs and CodeQL;
+      **not** E2E, which is path-filtered and never reports on docs-only PRs),
+      and require one human approving review. This is what turns "humans merge" from a convention into
       a hard control.
 - [ ] Agree who may approve specs (people with write/maintain/admin) and write
       it down in the team channel.
